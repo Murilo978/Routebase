@@ -1,12 +1,316 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Início — Routebase</title>
+  <!-- Fontes Google: Plus Jakarta Sans e Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <!-- CSS da Página -->
+  <link rel="stylesheet" href="../estilos/inicio.css">
 </head>
 <body>
-    <h1>Bem-vindo!</h1>
-    <p>Você entrou na sua conta. Parabéns! Você está em Inicio.html.</p>
+
+  <!-- Ilustrações orgânicas decorativas nos cantos -->
+  <img src="../assets/images/folha_ilustracao.png" alt="" aria-hidden="true" class="decor-leaf decor-top-left">
+  <img src="../assets/images/samambaia_ilustracao.png" alt="" aria-hidden="true" class="decor-leaf decor-bottom-right">
+
+  <!-- ================= BARRA SUPERIOR (NAVBAR) ================= -->
+  <header class="topbar">
+    <div class="topbar-container">
+      <!-- Esquerda: Logo -->
+      <a href="inicio.html" class="brand-link" aria-label="Início Routebase">
+        <img src="../assets/images/logo.png" alt="Logo Routebase" class="brand-logo">
+      </a>
+
+      <!-- Direita: Sino de Avisos + Avatar com Iniciais + Menu Usuário -->
+      <div class="topbar-actions">
+        <button type="button" class="icon-btn-bell" id="openAvisosBtn" aria-label="Abrir Meus Avisos" title="Meus Avisos">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span class="bell-badge" id="bellBadge" hidden></span>
+        </button>
+
+        <div class="user-menu-wrapper">
+          <button type="button" class="avatar-circle" id="userAvatarBtn" aria-expanded="false" aria-label="Menu do usuário" title="Conta">
+            <img id="headerAvatarImg" class="avatar-img" alt="Foto de perfil" hidden>
+            <span id="userInitials">--</span>
+          </button>
+
+          <div class="user-dropdown" id="userDropdown">
+            <!-- Avatar ampliado + Lapizinho para upload -->
+            <div class="profile-avatar-section">
+              <div class="profile-avatar-wrap">
+                <div class="profile-avatar-large">
+                  <img id="dropdownAvatarImg" class="avatar-img" alt="Foto de perfil" hidden>
+                  <span id="dropdownUserInitials">--</span>
+                </div>
+                <button type="button" class="btn-edit-avatar" id="triggerPhotoUploadBtn" title="Alterar foto de perfil" aria-label="Alterar foto de perfil">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                  </svg>
+                </button>
+              </div>
+              <input type="file" id="profilePhotoInput" accept="image/*" hidden>
+            </div>
+
+            <!-- Nome, E-mail e Quantidade de Ambientes -->
+            <div class="user-dropdown-info">
+              <strong id="dropdownUserName">Usuário</strong>
+              <span id="dropdownUserEmail">usuario@email.com</span>
+              <div class="user-env-counter" id="dropdownEnvCount">0 ambientes</div>
+            </div>
+
+            <div class="user-dropdown-divider"></div>
+
+            <button type="button" class="user-dropdown-logout" id="logoutBtn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+              Sair da conta
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= CONTEÚDO PRINCIPAL ================= -->
+  <main class="main-content">
+    <div class="container">
+
+      <!-- Boas-vindas sutis -->
+      <section class="welcome-strip">
+        <p class="welcome-greeting">Olá, <span id="welcomeUserName">...</span></p>
+        <h1 class="welcome-title">Suas rotas de trabalho</h1>
+      </section>
+
+      <!-- 2 CARTÕES PRINCIPAIS CENTRALIZADOS LADO A LADO -->
+      <section class="hero-actions-section" aria-label="Ações principais de ambiente">
+        <div class="action-cards-row">
+          <!-- Cartão Esquerdo: Criar Ambiente de Trabalho -->
+          <button type="button" class="action-card card-create" id="openCreateModalBtn">
+            <span class="action-card-title">Criar Ambiente de Trabalho</span>
+            <span class="action-card-icon-plus" aria-hidden="true">
+              <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+            </span>
+          </button>
+
+          <!-- Linha vertical sutil separadora -->
+          <div class="cards-vertical-divider" aria-hidden="true"></div>
+
+          <!-- Cartão Direito: Entrar em Ambiente por Código -->
+          <button type="button" class="action-card card-join" id="openJoinModalBtn">
+            <span class="action-card-title">Entrar em Ambiente por Código</span>
+            <span class="action-card-icon-code" aria-hidden="true">
+              <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+                <line x1="14" y1="4" x2="10" y2="20"></line>
+              </svg>
+            </span>
+          </button>
+        </div>
+      </section>
+
+      <!-- SEÇÃO ABAIXO: MEUS AMBIENTES -->
+      <section class="environments-section" aria-labelledby="envSectionTitle">
+        <div class="env-section-header">
+          <div>
+            <h2 id="envSectionTitle" class="env-section-title">Meus Ambientes</h2>
+            <p class="env-section-subtitle">Selecione uma sala para gerenciar tarefas, materiais e entregas.</p>
+          </div>
+          <span class="env-count-pill" id="envCountPill">0 salas</span>
+        </div>
+
+        <!-- Estado de Carregamento -->
+        <div class="env-loading" id="envLoading">
+          <div class="spinner"></div>
+          <p>Carregando seus ambientes...</p>
+        </div>
+
+        <!-- Estado Vazio -->
+        <div class="env-empty" id="envEmpty" hidden>
+          <p class="env-empty-title">Você ainda não participa de nenhum ambiente.</p>
+          <p class="env-empty-desc">Crie um novo ambiente de trabalho acima ou entre utilizando um código de convite da sua equipe.</p>
+        </div>
+
+        <!-- Grade de Ambientes -->
+        <div class="env-grid" id="envGrid"></div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ================= MODAL 1: CRIAR AMBIENTE DE TRABALHO ================= -->
+  <div class="modal-overlay" id="createEnvModal" aria-hidden="true" role="dialog" aria-labelledby="createEnvTitle">
+    <div class="modal-card">
+      <button type="button" class="modal-close" data-close-modal aria-label="Fechar janela">&times;</button>
+
+      <div class="modal-header">
+        <span class="modal-tag">Novo Espaço</span>
+        <h3 id="createEnvTitle">Criar Ambiente de Trabalho</h3>
+        <p>Configure a sala do projeto e gere um código exclusivo para convidar sua equipe.</p>
+      </div>
+
+      <!-- Formulário de Criação -->
+      <form id="createEnvForm" class="modal-form" novalidate>
+        <div class="form-group">
+          <label for="envNomeInput">Nome do Ambiente *</label>
+          <input
+            type="text"
+            id="envNomeInput"
+            name="nome"
+            placeholder="Ex: TCC Engenharia de Software"
+            maxlength="100"
+            required
+          >
+          <span class="field-error" id="envNomeError" aria-live="polite"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="envDescInput">Descrição <span class="label-opt">(opcional)</span></label>
+          <textarea
+            id="envDescInput"
+            name="descricao"
+            rows="3"
+            placeholder="Objetivo do grupo, disciplina ou escopo principal..."
+          ></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="envDataInput">Data de Entrega <span class="label-opt">(opcional)</span></label>
+          <input
+            type="date"
+            id="envDataInput"
+            name="data_entrega"
+          >
+        </div>
+
+        <div class="alert-box" id="createEnvAlert" role="alert"></div>
+
+        <button type="submit" class="btn-primary-pill" id="createEnvSubmitBtn">
+          Criar Ambiente
+        </button>
+      </form>
+
+      <!-- Resultado com Código Gerado após criação -->
+      <div class="created-code-box" id="createdCodeBox" hidden>
+        <div class="created-check-icon">✓</div>
+        <h4>Ambiente criado com sucesso!</h4>
+        <p>Compartilhe o código de convite abaixo com os integrantes do grupo:</p>
+
+        <div class="invite-code-display">
+          <span id="generatedInviteCode">------</span>
+          <button type="button" class="btn-copy-code" id="copyInviteCodeBtn">Copiar código</button>
+        </div>
+        <span class="copy-feedback" id="copyFeedback"></span>
+
+        <div class="created-actions">
+          <button type="button" class="btn-outline-pill" data-close-modal>Voltar para Início</button>
+          <button type="button" class="btn-terracotta-pill" id="goToCreatedEnvBtn">Abrir Ambiente</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL 2: ENTRAR EM AMBIENTE POR CÓDIGO ================= -->
+  <div class="modal-overlay" id="joinEnvModal" aria-hidden="true" role="dialog" aria-labelledby="joinEnvTitle">
+    <div class="modal-card">
+      <button type="button" class="modal-close" data-close-modal aria-label="Fechar janela">&times;</button>
+
+      <div class="modal-header">
+        <span class="modal-tag tag-terracotta">Acesso Rápido</span>
+        <h3 id="joinEnvTitle">Entrar em Ambiente por Código</h3>
+        <p>Digite o código de 6 caracteres fornecido pelo criador da sala.</p>
+      </div>
+
+      <form id="joinEnvForm" class="modal-form" novalidate>
+        <div class="form-group">
+          <label for="inviteCodeInput">Código de Convite</label>
+          <input
+            type="text"
+            id="inviteCodeInput"
+            name="codigo_convite"
+            class="code-highlight-input"
+            placeholder="EX: A7B9K2"
+            maxlength="6"
+            autocomplete="off"
+            spellcheck="false"
+            required
+          >
+          <span class="field-error" id="inviteCodeError" aria-live="polite"></span>
+        </div>
+
+        <div class="alert-box" id="joinEnvAlert" role="alert"></div>
+
+        <button type="submit" class="btn-terracotta-pill" id="joinEnvSubmitBtn">
+          Entrar no Ambiente
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= DRAWER LATERAL: MEUS AVISOS ================= -->
+  <div class="drawer-overlay" id="avisosDrawerOverlay" aria-hidden="true">
+    <aside class="avisos-drawer" role="dialog" aria-modal="true" aria-labelledby="avisosDrawerTitle">
+      <div class="drawer-header">
+        <div>
+          <h3 id="avisosDrawerTitle">Meus Avisos</h3>
+          <p>Pendências, indicações e prazos em tempo real</p>
+        </div>
+        <button type="button" class="drawer-close" id="closeAvisosBtn" aria-label="Fechar avisos">&times;</button>
+      </div>
+
+      <div class="drawer-body" id="avisosDrawerBody">
+        <!-- Seção 1: Indicações Pendentes -->
+        <section class="avisos-group">
+          <div class="avisos-group-header">
+            <h4>Indicações Pendentes</h4>
+            <span class="avisos-counter badge-amber" id="countIndicacoes">0</span>
+          </div>
+          <div class="avisos-list" id="listaIndicacoes">
+            <p class="aviso-empty">Nenhuma indicação aguardando sua resposta.</p>
+          </div>
+        </section>
+
+        <!-- Seção 2: Tarefas a Vencer Hoje -->
+        <section class="avisos-group">
+          <div class="avisos-group-header">
+            <h4>Tarefas a Vencer Hoje</h4>
+            <span class="avisos-counter badge-green" id="countHoje">0</span>
+          </div>
+          <div class="avisos-list" id="listaVencerHoje">
+            <p class="aviso-empty">Nenhuma entrega prevista para hoje.</p>
+          </div>
+        </section>
+
+        <!-- Seção 3: Tarefas Atrasadas -->
+        <section class="avisos-group">
+          <div class="avisos-group-header">
+            <h4>Tarefas Atrasadas</h4>
+            <span class="avisos-counter badge-danger" id="countAtrasadas">0</span>
+          </div>
+          <div class="avisos-list" id="listaAtrasadas">
+            <p class="aviso-empty">Nenhuma tarefa em atraso. Tudo em dia!</p>
+          </div>
+        </section>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Toast de Notificação Rápida -->
+  <div class="toast-notification" id="toastNotification" role="status" aria-live="polite"></div>
+
+  <script src="../javascript/inicio.js"></script>
 </body>
 </html>
