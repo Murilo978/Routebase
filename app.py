@@ -1,7 +1,7 @@
 import datetime
 import random
 import string
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 
 from models.ambiente import AmbienteTrabalho
 from models.participacao import Participacao
@@ -13,9 +13,14 @@ from daos.ambiente_dao import AmbienteDAO
 from daos.participacao_dao import ParticipacaoDAO
 from daos.tarefa_dao import TarefaDAO
 from daos.link_tarefa_dao import LinkTarefaDAO
-from database import obter_conexao
+from database import obter_conexao, inicializar_banco
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='.', static_folder='.', static_url_path='')
+
+# Cria todas as tabelas automaticamente se ainda não existirem
+inicializar_banco()
+
+
 
 usuario_dao = UsuarioDAO()
 ambiente_dao = AmbienteDAO()
@@ -218,6 +223,77 @@ def remover_participante(ambiente_id, usuario_id):
     executar_query("DELETE FROM Participacao WHERE ambiente_id = ? AND usuario_id = ?", (ambiente_id, usuario_id))
     return jsonify({"mensagem": "Participante removido"}), 200
 
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+# ==========================================
+# 4. ROTAS DE USUÁRIOS (CADASTRO E LOGIN)
+# ==========================================
+
+@app.route('/api/usuarios', methods=['GET'])
+def listar_usuarios():
+    rows = executar_query("SELECT id, nome, email, foto_perfil FROM Usuario", fetch='all')
+    usuarios = [
+        {
+            "id": r['id'],
+            "nome": r['nome'],
+            "email": r['email'],
+            "foto_perfil": r['foto_perfil']
+        } for r in rows
+    ]
+    return jsonify(usuarios), 200
+
+
+@app.route('/api/usuarios', methods=['POST'])
+def cadastrar_usuario():
+    dados = request.get_json() or {}
+    nome = dados.get('nome')
+    email = dados.get('email')
+    foto_perfil = dados.get('foto_perfil', 'default.png')
+
+    if not nome or not email:
+        return jsonify({"erro": "Nome e e-mail são obrigatórios"}), 400
+
+    # Verifica se o e-mail já está no banco
+    existente = executar_query(
+        "SELECT id, nome, email, foto_perfil FROM Usuario WHERE email = ?", 
+        (email,), 
+        fetch='one'
+    )
+    if existente:
+        return jsonify({
+            "mensagem": "Usuário já cadastrado",
+            "usuario": {
+                "id": existente['id'],
+                "nome": existente['nome'],
+                "email": existente['email'],
+                "foto_perfil": existente['foto_perfil']
+            }
+        }), 200
+
+    # Insere o novo usuário no banco
+    executar_query(
+        "INSERT INTO Usuario (nome, email, foto_perfil) VALUES (?, ?, ?)",
+        (nome, email, foto_perfil)
+    )
+
+    # Busca o usuário recém-criado para retornar com o ID
+    novo = executar_query(
+        "SELECT id, nome, email, foto_perfil FROM Usuario WHERE email = ?", 
+        (email,), 
+        fetch='one'
+    )
+
+    return jsonify({
+        "mensagem": "Usuário criado com sucesso",
+        "usuario": {
+            "id": novo['id'],
+            "nome": novo['nome'],
+            "email": novo['email'],
+            "foto_perfil": novo['foto_perfil']
+        }
+    }), 201
 
 if __name__ == '__main__':
     app.run(debug=True)
