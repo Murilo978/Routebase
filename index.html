@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Routebase — Gestão Colaborativa de Trabalhos em Grupo</title>
+  <!-- Fontes Google: Plus Jakarta Sans e Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="estilos/style.css">
+</head>
+<body>
+
+  <!-- ================= 1. CABEÇALHO (NAVBAR) ================= -->
+  <header class="navbar" id="navbar">
+    <div class="container navbar-container">
+      <!-- Esquerda: Logo -->
+      <a href="#" class="brand">
+        <img src="assets/images/logo.png" alt="Logo Routebase" class="brand-logo">
+      </a>
+
+      <!-- Centro: Links com Dropdowns -->
+      <nav class="nav-menu" id="navMenu" aria-label="Navegação Principal">
+        <ul class="nav-list">
+          <li class="nav-item has-dropdown">
+            <button class="nav-link dropdown-toggle" aria-expanded="false">
+              Produto
+              <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="dropdown-menu">
+              <a href="#pilares" class="dropdown-item">
+                <strong>Ambientes por Código</strong>
+                <span>Crie salas exclusivas para cada projeto da equipe.</span>
+              </a>
+              <a href="#pilares" class="dropdown-item">
+                <strong>Painel Meus Avisos</strong>
+                <span>Centralize prazos do dia, atrasos e indicações.</span>
+              </a>
+              <a href="#como-funciona" class="dropdown-item">
+                <strong>Materiais Integrados</strong>
+                <span>Anexe links externos diretamente em cada tarefa.</span>
+              </a>
+            </div>
+          </li>
+
+          <li class="nav-item has-dropdown">
+            <button class="nav-link dropdown-toggle" aria-expanded="false">
+              Funcionalidades
+              <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+            <div class="dropdown-menu">
+              <a href="#pilares" class="dropdown-item">
+                <strong>Indicação com Aceite</strong>
+                <span>Compromissos claros sem tarefas impostas.</span>
+              </a>
+              <a href="#como-funciona" class="dropdown-item">
+                <strong>Controle de Andamento</strong>
+                <span>Acompanhe etapas: A Fazer, Em Andamento e Concluída.</span>
+              </a>
+            </div>
+          </li>
+
+          <li class="nav-item">
+            <a href="#como-funciona" class="nav-link">Como funciona</a>
+          </li>
+
+          <li class="nav-item">
+            <a href="#cta-final" class="nav-link">Planos / Grátis</a>
+          </li>
+        </ul>
+
+        <!-- Ações Mobile (Visível apenas em telas menores) -->
+        <div class="mobile-actions">
+          <a href="pages/login.html" class="btn btn-ghost">Entrar</a>
+          <a href="pages/cadastro.html" class="btn btn-primary">Criar conta grátis</a>
+        </div>
+      </nav>
+
+      <!-- Direita: Ações Desktop -->
+      <div class="nav-actions">
+        <a href="pages/login.html" class="btn btn-ghost">Entrar</a>
+        <a href="pages/cadastro.html" class="btn btn-primary">Criar conta grátis</a>
+      </div>
+
+      <!-- Botão Hambúrguer Mobile -->
+      <button class="hamburger" id="hamburgerBtn" aria-label="Abrir menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ================= 2. SEÇÃO HERO ================= -->
+    <section class="hero">
+      <!-- Ilustrações orgânicas decorativas nos cantos -->
+      <img src="assets/images/folha_ilustracao.png" alt="" aria-hidden="true" class="decor-leaf decor-top-left">
+      <img src="assets/images/samambaia_ilustracao.png" alt="" aria-hidden="true" class="decor-leaf decor-bottom-right">
+
+      <div class="container hero-grid">
+        <!-- Coluna Esquerda -->
+        <div class="hero-content">
+          <span class="badge-organic">Organização colaborativa sem ruído</span>
+          <h1 class="hero-title">Trabalhos em grupo organizados, com responsabilidades claras para todos.</h1>
+          <p class="hero-subtitle">
+            Centralize prazos, compartilhe links de apoio e defina quem faz o quê através de um sistema transparente de aceite entre colegas.
+          </p>
+          <div class="hero-cta-group">
+            <a href="pages/cadastro.html" class="btn btn-primary btn-lg">
+              Começar gratuitamente
+            </a>
+            <button type="button" class="btn btn-outline btn-lg open-modal" data-modal="demoModal">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+              Ver demonstração
+            </button>
+          </div>
+          <p class="hero-note">Acesso imediato apenas com nome e e-mail. Sem cartão de crédito.</p>
+        </div>
+
+        <!-- Coluna Direita: Moldura do painel real -->
+        <div class="hero-visual">
+          <div class="window-frame">
+            <div class="window-header">
+              <div class="window-dots">
+                <span></span><span></span><span></span>
+              </div>
+              <div class="window-url">app.routebase.com/painel</div>
+            </div>
+            <div class="window-body">
+              <img src="assets/images/painel_homepage.jpg" alt="Interface principal do painel Routebase exibindo ambientes e avisos" class="hero-screenshot">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 3. FAIXA DE DESTAQUE DE VALOR ================= -->
+    <section class="value-strip">
+      <div class="container value-strip-inner">
+        <p class="value-phrase">Feito para equipes que organizam melhor e entregam no prazo</p>
+        <div class="value-badges">
+          <div class="value-pill">
+            <span class="pill-dot"></span>
+            100% Gratuito para começar
+          </div>
+          <div class="value-pill">
+            <span class="pill-dot"></span>
+            Gestão visual simples
+          </div>
+          <div class="value-pill">
+            <span class="pill-dot"></span>
+            Avisos e prazos em tempo real
+          </div>
+          <div class="value-pill">
+            <span class="pill-dot"></span>
+            Responsabilidade por aceite
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 4. SEÇÃO DE PILARES / BENEFÍCIOS ================= -->
+    <section class="pillars-section" id="pilares">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Por que usar o Routebase</span>
+          <h2 class="section-title">Chega de tarefas perdidas em grupos de mensagens</h2>
+          <p class="section-subtitle">
+            Estruturamos cada etapa do trabalho coletivo para evitar dúvidas sobre quem assumiu cada entrega.
+          </p>
+        </div>
+
+        <div class="pillars-grid">
+          <!-- Cartão 1 -->
+          <article class="pillar-card">
+            <div class="pillar-icon-wrap">
+              <img src="assets/icons/equipe.png" alt="Ícone de Equipe Colaborativa" class="pillar-icon">
+            </div>
+            <h3>Ambientes por Código de Convite</h3>
+            <p>
+              Crie um espaço dedicado para cada projeto e compartilhe um código único de 6 caracteres. Os colegas entram em segundos sem cadastros burocráticos.
+            </p>
+          </article>
+
+          <!-- Cartão 2 -->
+          <article class="pillar-card">
+            <div class="pillar-icon-wrap">
+              <img src="assets/icons/produtividade.png" alt="Ícone de Fluxo e Produtividade" class="pillar-icon">
+            </div>
+            <h3>Acordo Transparente de Tarefas</h3>
+            <p>
+              Assuma atividades disponíveis voluntariamente ou indique um colega. A tarefa só inicia após o aceite formal, garantindo compromissos reais.
+            </p>
+          </article>
+
+          <!-- Cartão 3 -->
+          <article class="pillar-card">
+            <div class="pillar-icon-wrap">
+              <img src="assets/icons/prazo.png" alt="Ícone de Controle de Prazos" class="pillar-icon">
+            </div>
+            <h3>Painel "Meus Avisos" Inteligente</h3>
+            <p>
+              Acompanhe automaticamente o que vence hoje, nos próximos 2 dias, entregas em atraso e indicações pendentes da sua confirmação.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 5. SEÇÃO "COMO FUNCIONA" ================= -->
+    <section class="steps-section" id="como-funciona">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-tag">Fluxo Simples</span>
+          <h2 class="section-title">Do planejamento à entrega em 3 passos</h2>
+          <p class="section-subtitle">
+            Um fluxo pensado para equipes acadêmicas, projetos ágeis e grupos de trabalho colaborativo.
+          </p>
+        </div>
+
+        <div class="steps-wrapper">
+          <!-- Passo 1 -->
+          <div class="step-row">
+            <div class="step-text">
+              <span class="step-number">01</span>
+              <h3>Crie um ambiente de trabalho</h3>
+              <p>
+                Defina o nome do projeto, uma breve descrição e a data final de entrega. Você se torna o criador do ambiente com controle administrativo completo.
+              </p>
+              <ul class="step-checklist">
+                <li>Identificação rápida apenas com nome e e-mail</li>
+                <li>Data de entrega centralizada para todo o grupo</li>
+              </ul>
+            </div>
+            <div class="step-media">
+              <div class="media-card">
+                <img src="assets/images/area_ambiente_codigo.jpg" alt="Tela de criação e visualização de ambiente no Routebase">
+              </div>
+            </div>
+          </div>
+
+          <!-- Passo 2 -->
+          <div class="step-row step-row-reverse">
+            <div class="step-text">
+              <span class="step-number">02</span>
+              <h3>Convide sua equipe com um código</h3>
+              <p>
+                Cada ambiente gera um código exclusivo. Compartilhe no grupo da equipe para que todos entrem no espaço e comecem a criar e assumir tarefas.
+              </p>
+              <ul class="step-checklist">
+                <li>Entrada instantânea via código de convite</li>
+                <li>Regeneração de código a qualquer momento pelo criador</li>
+              </ul>
+            </div>
+            <div class="step-media">
+              <div class="media-card">
+                <img src="assets/images/codigo_ambiente.jpg" alt="Compartilhamento de código de convite do ambiente">
+              </div>
+            </div>
+          </div>
+
+          <!-- Passo 3 -->
+          <div class="step-row">
+            <div class="step-text">
+              <span class="step-number">03</span>
+              <h3>Organize tarefas, links e acompanhe prazos</h3>
+              <p>
+                Anexe links de documentos ou referências em cada atividade, atualize o status entre <em>A Fazer</em>, <em>Em Andamento</em> e <em>Concluída</em> e monitore prazos na tela inicial.
+              </p>
+              <ul class="step-checklist">
+                <li>Alertas automáticos de tarefas atrasadas ou a vencer</li>
+                <li>Links externos organizados dentro de cada demanda</li>
+              </ul>
+            </div>
+            <div class="step-media">
+              <div class="media-card">
+                <img src="assets/images/area_avisos.jpg" alt="Área de avisos e monitoramento de prazos no Routebase">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 6. CHAMADA FINAL (CTA) ================= -->
+    <section class="cta-section" id="cta-final">
+      <div class="container">
+        <div class="cta-box">
+          <h2>Pronto para organizar seu próximo trabalho em grupo?</h2>
+          <p>
+            Crie seu primeiro ambiente gratuitamente em menos de 30 segundos. Sem senhas complexas ou configurações demoradas.
+          </p>
+          <div class="cta-buttons">
+            <a href="pages/cadastro.html" class="btn btn-white btn-lg">
+              Criar conta grátis agora
+            </a>
+            <a href="pages/login.html" class="btn btn-outline-light btn-lg">
+              Já tenho acesso
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================= RODAPÉ (FOOTER) ================= -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="brand">
+          <img src="assets/images/logo.png" alt="Logo Routebase" class="brand-logo-footer">
+        </a>
+        <p class="footer-desc">
+          Plataforma web para organização colaborativa de trabalhos em grupo, definição transparente de responsabilidades e acompanhamento de prazos.
+        </p>
+      </div>
+
+      <div class="footer-links-group">
+        <h4>Plataforma</h4>
+        <ul>
+          <li><a href="#pilares">Benefícios</a></li>
+          <li><a href="#como-funciona">Como funciona</a></li>
+          <li><a href="#" class="open-modal" data-modal="demoModal">Demonstração</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links-group">
+        <h4>Acesso</h4>
+        <ul>
+          <li><a href="pages/cadastro.html">Criar conta grátis</a></li>
+          <li><a href="pages/login.html">Entrar no sistema</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-links-group">
+        <h4>Institucional</h4>
+        <ul>
+          <li><a href="#cta-final">Termos de Uso</a></li>
+          <li><a href="#cta-final">Privacidade</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <p>&copy; 2026 Routebase. Todos os direitos reservados.</p>
+    </div>
+  </footer>
+
+  <!-- ================= 7. MODAIS INTERATIVOS ================= -->
+
+  <!-- MODAL 1: CRIAR CONTA GRÁTIS -->
+  <div class="modal-overlay" id="registerModal" aria-hidden="true" role="dialog" aria-labelledby="registerTitle">
+    <div class="modal-card">
+      <button type="button" class="modal-close" aria-label="Fechar janela">&times;</button>
+      <div class="modal-header">
+        <img src="assets/images/logo.png" alt="Routebase" class="modal-logo">
+        <h3 id="registerTitle">Criar conta gratuita</h3>
+        <p>Identificação simplificada: informe seu nome e e-mail para começar.</p>
+      </div>
+
+      <form id="registerForm" class="modal-form" novalidate>
+        <div class="form-group">
+          <label for="regNome">Nome completo</label>
+          <input type="text" id="regNome" name="nome" placeholder="Ex: Ana Beatriz Silva" required>
+          <small class="error-msg" id="regNomeError"></small>
+        </div>
+
+        <div class="form-group">
+          <label for="regEmail">E-mail</label>
+          <input type="email" id="regEmail" name="email" placeholder="ana@exemplo.com" required>
+          <small class="error-msg" id="regEmailError"></small>
+        </div>
+
+        <div class="form-feedback" id="registerFeedback"></div>
+
+        <button type="submit" class="btn btn-primary btn-block">Criar conta e acessar</button>
+      </form>
+
+      <div class="modal-footer-switch">
+        Já possui cadastro?
+        <a href="pages/login.html" class="link-switch">Entrar agora</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: ENTRAR / LOGIN -->
+  <div class="modal-overlay" id="loginModal" aria-hidden="true" role="dialog" aria-labelledby="loginTitle">
+    <div class="modal-card">
+      <button type="button" class="modal-close" aria-label="Fechar janela">&times;</button>
+      <div class="modal-header">
+        <img src="assets/images/logo.png" alt="Routebase" class="modal-logo">
+        <h3 id="loginTitle">Entrar no Routebase</h3>
+        <p>Informe seu nome e e-mail cadastrados para recuperar seus ambientes e avisos.</p>
+      </div>
+
+      <form id="loginForm" class="modal-form" novalidate>
+        <div class="form-group">
+          <label for="loginNome">Seu nome</label>
+          <input type="text" id="loginNome" name="nome" placeholder="Seu nome cadastrado" required>
+          <small class="error-msg" id="loginNomeError"></small>
+        </div>
+
+        <div class="form-group">
+          <label for="loginEmail">Seu e-mail</label>
+          <input type="email" id="loginEmail" name="email" placeholder="voce@exemplo.com" required>
+          <small class="error-msg" id="loginEmailError"></small>
+        </div>
+
+        <div class="form-feedback" id="loginFeedback"></div>
+
+        <button type="submit" class="btn btn-primary btn-block">Acessar meus ambientes</button>
+      </form>
+
+      <div class="modal-footer-switch">
+        Ainda não tem conta?
+        <a href="pages/cadastro.html" class="link-switch">Criar conta grátis</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: DEMONSTRAÇÃO INTERATIVA -->
+  <div class="modal-overlay" id="demoModal" aria-hidden="true" role="dialog" aria-labelledby="demoTitle">
+    <div class="modal-card modal-card-lg">
+      <button type="button" class="modal-close" aria-label="Fechar demonstração">&times;</button>
+      <div class="modal-header">
+        <span class="badge-organic">Visão Geral da Plataforma</span>
+        <h3 id="demoTitle">Como o Routebase organiza sua equipe</h3>
+        <p>Veja o painel unificado de tarefas, indicações pendentes e prazos.</p>
+      </div>
+
+      <div class="demo-preview-box">
+        <img src="assets/images/painel_homepage.jpg" alt="Demonstração do painel do Routebase">
+        <div class="demo-highlights">
+          <div class="demo-item">
+            <strong>1. Aceite de Tarefas</strong>
+            <span>Ninguém recebe tarefas sem concordar antes.</span>
+          </div>
+          <div class="demo-item">
+            <strong>2. Código de Convite</strong>
+            <span>Compartilhe o código e reúna o grupo na hora.</span>
+          </div>
+          <div class="demo-item">
+            <strong>3. Meus Avisos</strong>
+            <span>Alertas automáticos de vencimento e atrasos.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-actions">
+        <a href="pages/cadastro.html" class="btn btn-primary">Testar gratuitamente agora</a>
+      </div>
+    </div>
+  </div>
+
+  <script src="javascript/script.js"></script>
+</body>
+</html>
