@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criar Conta — Routebase</title>
+  <!-- Fontes Google: Plus Jakarta Sans e Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <!-- Importação CSS com caminho relativo exato -->
+  <link rel="stylesheet" href="../estilos/cadastro.css">
+</head>
+<body>
+
+  <!-- Ilustrações orgânicas decorativas nos cantos -->
+  <img src="../assets/images/folha_ilustracao.png" alt="" aria-hidden="true" class="decor-leaf decor-top-left">
+  <img src="../assets/images/samambaia_ilustracao.png" alt="" aria-hidden="true" class="decor-leaf decor-bottom-right">
+
+  <main class="auth-wrapper">
+    <!-- Cabeçalho Centralizado com Logo -->
+    <header class="auth-header">
+      <a href="../index.html" class="brand-link" aria-label="Voltar para a página inicial do Routebase">
+        <img src="../assets/images/logo.png" alt="Logo Routebase" class="brand-logo">
+        
+      </a>
+    </header>
+
+    <!-- Cartão Central de Cadastro -->
+    <section class="auth-card" aria-labelledby="registerHeading">
+      <h1 id="registerHeading" class="card-title">Criar Nova Base</h1>
+
+      <form id="registerForm" class="auth-form" novalidate>
+        <!-- Campo 1: Nome Completo -->
+        <div class="form-group">
+          <label for="nomeInput">Nome Completo</label>
+          <input
+            type="text"
+            id="nomeInput"
+            name="nome"
+            placeholder="Nome Completo"
+            autocomplete="name"
+            required
+          >
+          <span class="field-error" id="nomeError" aria-live="polite"></span>
+        </div>
+
+        <!-- Campo 2: E-Mail Principal -->
+        <div class="form-group">
+          <label for="emailInput">E-Mail Principal</label>
+          <input
+            type="email"
+            id="emailInput"
+            name="email"
+            placeholder="E-Mail Principal"
+            autocomplete="email"
+            required
+          >
+          <span class="field-error" id="emailError" aria-live="polite"></span>
+        </div>
+
+        <!-- Checkbox Obrigatório de Termos -->
+        <div class="checkbox-group">
+          <label class="checkbox-label" for="termosCheckbox">
+            <input type="checkbox" id="termosCheckbox" name="termos" required>
+            <span class="custom-checkmark" aria-hidden="true"></span>
+            <span class="checkbox-text">
+              Concordo com os Termos de Uso e Política de Privacidade
+            </span>
+          </label>
+          <span class="field-error" id="termosError" aria-live="polite"></span>
+        </div>
+
+        <!-- Alerta de Feedback (Erro, Duplicidade ou Sucesso) -->
+        <div class="alert-box" id="alertBox" role="alert" aria-live="assertive"></div>
+
+        <!-- Botão Principal em formato pílula (Terracota / Laranja queimado) -->
+        <button type="submit" class="btn-submit" id="submitBtn">
+          Cadastrar Gratuitamente
+        </button>
+      </form>
+
+      <!-- Rodapé do Cartão -->
+      <footer class="card-footer">
+        <p>
+          Já tem uma conta?
+          <a href="login.html" class="login-link">Entrar</a>
+        </p>
+      </footer>
+    </section>
+  </main>
+
+  <!-- Importação JS com caminho relativo exato -->
+  <script src="../javascript/cadastro.js"></script>
+</body>
+</html>
