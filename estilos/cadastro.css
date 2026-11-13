@@ -1,0 +1,348 @@
+/* ================= VARIÁVEIS E RESET ================= */
+:root {
+  --bg-page: #F4F3EE;
+  --bg-card: #FFFFFF;
+  --terracotta-btn: #B85D28;
+  --terracotta-btn-hover: #9E4D1F;
+  --primary-btn-hover: #212E21;
+  --accent-green: #5C7457;
+  --primary-dark: #2D3E2D;
+  --text-main: #1E241E;
+  --text-secondary: #5A635A;
+  --border-subtle: #E2E0D8;
+  --input-bg: #FAF9F6;
+  --danger-bg: #FDECEA;
+  --danger-text: #B93832;
+  --danger-border: #F5C2BE;
+  --success-bg: #EBF0EA;
+  --success-text: #2D3E2D;
+
+  --font-heading: 'Plus Jakarta Sans', sans-serif;
+  --font-body: 'Inter', sans-serif;
+
+  --shadow-card: 0 14px 36px rgba(30, 36, 30, 0.06);
+  --transition: all 0.22s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow-x: hidden;
+  padding: 24px 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ================= ILUSTRAÇÕES DE FOLHAS ================= */
+.decor-leaf {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.32;
+  user-select: none;
+}
+
+.decor-top-left {
+  top: -15px;
+  left: -20px;
+  width: 230px;
+}
+
+.decor-bottom-right {
+  bottom: -20px;
+  right: -15px;
+  width: 260px;
+}
+
+/* ================= ESTRUTURA CENTRAL ================= */
+.auth-wrapper {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 450px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Cabeçalho com Logo Centralizada */
+.auth-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.brand-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text-main);
+  transition: var(--transition);
+}
+
+.brand-link:hover {
+  opacity: 0.85;
+}
+
+.brand-logo {
+  width: 220px;
+  height: auto;
+  object-fit: contain;
+}
+
+.brand-name {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.45rem;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
+}
+
+/* ================= CARTÃO CENTRAL ================= */
+.auth-card {
+  width: 100%;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 22px;
+  padding: 40px 36px;
+  box-shadow: var(--shadow-card);
+}
+
+.card-title {
+  font-family: var(--font-heading);
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: var(--text-main);
+  text-align: center;
+  margin-bottom: 28px;
+  letter-spacing: -0.02em;
+}
+
+/* ================= FORMULÁRIO ================= */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.form-group label {
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.form-group input {
+  width: 100%;
+  padding: 13px 16px;
+  font-family: var(--font-body);
+  font-size: 0.96rem;
+  color: var(--text-main);
+  background-color: var(--input-bg);
+  border: 1.5px solid var(--border-subtle);
+  border-radius: 12px;
+  transition: var(--transition);
+}
+
+.form-group input::placeholder {
+  color: #9AA19A;
+}
+
+.form-group input:focus {
+  outline: none;
+  background-color: #FFFFFF;
+  border-color: var(--terracotta-btn);
+  box-shadow: 0 0 0 3px rgba(184, 93, 40, 0.14);
+}
+
+.form-group input.input-invalid {
+  border-color: var(--danger-text);
+}
+
+/* ================= CHECKBOX TERMOS ================= */
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+
+.checkbox-label input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.custom-checkmark {
+  flex-shrink: 0;
+  width: 19px;
+  height: 19px;
+  margin-top: 2px;
+  border-radius: 6px;
+  border: 1.5px solid #C8C5BC;
+  background-color: var(--input-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+
+.checkbox-label input[type="checkbox"]:checked + .custom-checkmark {
+  background-color: var(--terracotta-btn);
+  border-color: var(--terracotta-btn);
+}
+
+.checkbox-label input[type="checkbox"]:checked + .custom-checkmark::after {
+  content: "";
+  width: 5px;
+  height: 9px;
+  border: solid #FFFFFF;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  margin-bottom: 2px;
+}
+
+.checkbox-label input[type="checkbox"]:focus-visible + .custom-checkmark {
+  box-shadow: 0 0 0 3px rgba(184, 93, 40, 0.2);
+}
+
+.checkbox-text {
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+
+.field-error {
+  font-size: 0.8rem;
+  color: var(--danger-text);
+  min-height: 14px;
+}
+
+/* ================= CAIXA DE ALERTA ================= */
+.alert-box {
+  display: none;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.alert-box.show-error {
+  display: block;
+  background-color: var(--danger-bg);
+  color: var(--danger-text);
+  border: 1px solid var(--danger-border);
+}
+
+.alert-box.show-success {
+  display: block;
+  background-color: var(--success-bg);
+  color: var(--success-text);
+  border: 1px solid #C5D6C1;
+}
+
+.alert-box a {
+  color: var(--terracotta-btn);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+/* ================= BOTÃO PÍLULA (TERRACOTA) ================= */
+.btn-submit {
+  width: 100%;
+  margin-top: 6px;
+  padding: 15px 24px;
+  background-color: var(--primary-btn-hover);
+  color: #FFFFFF;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-submit:hover:not(:disabled) {
+  background-color: var(--terracotta-btn-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(184, 93, 40, 0.26);
+}
+
+.btn-submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* ================= RODAPÉ DO CARTÃO ================= */
+.card-footer {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-subtle);
+  text-align: center;
+}
+
+.card-footer p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.login-link {
+  color: var(--primary-dark);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  text-decoration: none;
+  margin-left: 4px;
+  transition: var(--transition);
+}
+
+.login-link:hover {
+  text-decoration: underline;
+  color: var(--terracotta-btn);
+}
+
+/* ================= RESPONSIVIDADE ================= */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 32px 22px;
+    border-radius: 18px;
+  }
+
+  .card-title {
+    font-size: 1.45rem;
+  }
+
+  .decor-top-left,
+  .decor-bottom-right {
+    width: 150px;
+    opacity: 0.22;
+  }
+}
