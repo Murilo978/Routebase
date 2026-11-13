@@ -11,7 +11,7 @@ def obter_conexao():
     return conn
 
 def inicializar_banco():
-    """Cria todas as tabelas do sistema Routebase se elas ainda não existirem."""
+    """Cria todas as tabelas do sistema se elas ainda não existirem."""
     conn = obter_conexao()
     cursor = conn.cursor()
 
@@ -36,8 +36,8 @@ def inicializar_banco():
         papel TEXT NOT NULL,
         usuario_id INTEGER NOT NULL,
         ambiente_id INTEGER NOT NULL,
-        FOREIGN KEY (usuario_id) REFERENCES Usuario(id),
-        FOREIGN KEY (ambiente_id) REFERENCES AmbienteTrabalho(id)
+        FOREIGN KEY (usuario_id) REFERENCES Usuario(id) ON DELETE CASCADE,
+        FOREIGN KEY (ambiente_id) REFERENCES AmbienteTrabalho(id) ON DELETE CASCADE
     );
 
     CREATE TABLE IF NOT EXISTS Tarefa (
@@ -49,9 +49,9 @@ def inicializar_banco():
         ambiente_id INTEGER NOT NULL,
         responsavel_id INTEGER,
         indicado_id INTEGER,
-        FOREIGN KEY (ambiente_id) REFERENCES AmbienteTrabalho(id),
-        FOREIGN KEY (responsavel_id) REFERENCES Participacao(id),
-        FOREIGN KEY (indicado_id) REFERENCES Participacao(id)
+        FOREIGN KEY (ambiente_id) REFERENCES AmbienteTrabalho(id) ON DELETE CASCADE,
+        FOREIGN KEY (responsavel_id) REFERENCES Usuario(id) ON DELETE SET NULL,
+        FOREIGN KEY (indicado_id) REFERENCES Usuario(id) ON DELETE SET NULL
     );
 
     CREATE TABLE IF NOT EXISTS LinkTarefa (
@@ -59,7 +59,7 @@ def inicializar_banco():
         titulo TEXT NOT NULL,
         url TEXT NOT NULL,
         tarefa_id INTEGER NOT NULL,
-        FOREIGN KEY (tarefa_id) REFERENCES Tarefa(id)
+        FOREIGN KEY (tarefa_id) REFERENCES Tarefa(id) ON DELETE CASCADE
     );
     """
 
