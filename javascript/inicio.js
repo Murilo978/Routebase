@@ -317,8 +317,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  /* ==========================================================================
-     5. CRIAR AMBIENTE DE TRABALHO (POST /api/ambientes)
+/* ==========================================================================
+     5. CRIAR AMBIENTE DE TRABALHO (POST /api/ambientes) -> REDIRECIONA DIRETO
      ========================================================================== */
   const createEnvModal = document.getElementById('createEnvModal');
   const openCreateModalBtn = document.getElementById('openCreateModalBtn');
@@ -330,21 +330,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const createEnvAlert = document.getElementById('createEnvAlert');
   const createEnvSubmitBtn = document.getElementById('createEnvSubmitBtn');
 
-  const createdCodeBox = document.getElementById('createdCodeBox');
-  const generatedInviteCode = document.getElementById('generatedInviteCode');
-  const copyInviteCodeBtn = document.getElementById('copyInviteCodeBtn');
-  const copyFeedback = document.getElementById('copyFeedback');
-  const goToCreatedEnvBtn = document.getElementById('goToCreatedEnvBtn');
-
-  let ultimoAmbienteCriado = null;
-
   openCreateModalBtn.addEventListener('click', () => {
     createEnvForm.reset();
-    createEnvForm.hidden = false;
-    createdCodeBox.hidden = true;
     envNomeError.textContent = '';
     createEnvAlert.className = 'alert-box';
-    copyFeedback.textContent = '';
     abrirModal(createEnvModal);
     setTimeout(() => envNomeInput.focus(), 100);
   });
@@ -387,48 +376,28 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const ambienteCriado = data.ambiente || data;
-      ultimoAmbienteCriado = ambienteCriado;
+      const ambienteId = ambienteCriado.id || data.ambiente_id || data.id;
 
-      // Exibe tela com o código de convite gerado
-      generatedInviteCode.textContent = ambienteCriado.codigo_convite || '------';
-      createEnvForm.hidden = true;
-      createdCodeBox.hidden = false;
+      if (!ambienteId) {
+        throw new Error('Ambiente criado, mas o ID não foi retornado pela API.');
+      }
 
-      // Atualiza a grade de ambientes no fundo
-      await carregarAmbientes();
+      localStorage.setItem('routebase_ambiente_atual_id', String(ambienteId));
+      localStorage.setItem('routebase_ambiente_atual', JSON.stringify(ambienteCriado));
+
+      window.location.href = `ambiente.html?id=${ambienteId}`;
     } catch (error) {
       createEnvAlert.textContent = error.message.includes('Failed to fetch')
         ? 'Erro de conexão com o servidor Flask.'
         : error.message;
       createEnvAlert.classList.add('show-error');
-    } finally {
       createEnvSubmitBtn.disabled = false;
       createEnvSubmitBtn.textContent = textoOriginal;
     }
   });
 
-  copyInviteCodeBtn.addEventListener('click', async () => {
-    const codigo = generatedInviteCode.textContent.trim();
-    if (!codigo || codigo === '------') return;
-
-    try {
-      await navigator.clipboard.writeText(codigo);
-      copyFeedback.textContent = 'Código copiado para a área de transferência!';
-    } catch (_) {
-      copyFeedback.textContent = `Código: ${codigo}`;
-    }
-  });
-
-  goToCreatedEnvBtn.addEventListener('click', () => {
-    if (ultimoAmbienteCriado && ultimoAmbienteCriado.id) {
-      abrirSalaAmbiente(ultimoAmbienteCriado);
-    } else {
-      fecharTodosModais();
-    }
-  });
-
   /* ==========================================================================
-     6. ENTRAR EM AMBIENTE POR CÓDIGO (POST /api/ambientes/entrar)
+     6. ENTRAR EM AMBIENTE POR CÓDIGO (POST /api/ambientes/entrar) -> REDIRECIONA DIRETO
      ========================================================================== */
   const joinEnvModal = document.getElementById('joinEnvModal');
   const openJoinModalBtn = document.getElementById('openJoinModalBtn');
@@ -483,21 +452,22 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error(data.erro || 'Código inválido ou ambiente não encontrado.');
       }
 
-      joinEnvAlert.textContent = data.mensagem || 'Você entrou no ambiente com sucesso!';
-      joinEnvAlert.classList.add('show-success');
+      const ambienteEntrado = data.ambiente || data;
+      const ambienteId = ambienteEntrado.id || data.ambiente_id || data.id;
 
-      await carregarAmbientes();
+      if (!ambienteId) {
+        throw new Error('Entrada confirmada, mas o ID do ambiente não foi retornado.');
+      }
 
-      setTimeout(() => {
-        fecharTodosModais();
-        mostrarToast('Ambiente adicionado à sua lista!');
-      }, 750);
+      localStorage.setItem('routebase_ambiente_atual_id', String(ambienteId));
+      localStorage.setItem('routebase_ambiente_atual', JSON.stringify(ambienteEntrado));
+
+      window.location.href = `ambiente.html?id=${ambienteId}`;
     } catch (error) {
       joinEnvAlert.textContent = error.message.includes('Failed to fetch')
         ? 'Erro de conexão com o servidor Flask.'
         : error.message;
       joinEnvAlert.classList.add('show-error');
-    } finally {
       joinEnvSubmitBtn.disabled = false;
       joinEnvSubmitBtn.textContent = textoOriginal;
     }
