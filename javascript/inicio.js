@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Base da API Flask
-  const API_BASE_URL = 'http://127.0.0.1:5000/api';
+  const API_BASE_URL = '';
 
   /* ==========================================================================
      1. PROTEÇÃO DE ROTA E IDENTIFICAÇÃO DO USUÁRIO LOGADO (localStorage)

@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Base da API Flask (ajuste para '/api' caso sirva pelo mesmo domínio do Flask)
-  const API_BASE_URL = 'http://127.0.0.1:5000/api';
+  const API_BASE_URL = '';
 
   const registerForm = document.getElementById('registerForm');
   const nomeInput = document.getElementById('nomeInput');
