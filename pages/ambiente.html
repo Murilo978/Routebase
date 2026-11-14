@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ambiente de Trabalho — Routebase</title>
+  <!-- Fontes Google: Plus Jakarta Sans e Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <!-- CSS da Página -->
+  <link rel="stylesheet" href="../estilos/ambiente.css">
+</head>
+<body>
+
+  <!-- Ilustração orgânica decorativa no canto inferior direito -->
+  <img src="../assets/images/samambaia_ilustracao.png" alt="" aria-hidden="true" class="decor-leaf decor-bottom-right">
+
+  <div class="app-shell">
+    <!-- ================= BARRA LATERAL ESQUERDA (SIDEBAR) ================= -->
+    <aside class="sidebar" id="appSidebar" aria-label="Navegação do Ambiente">
+      <div class="sidebar-top">
+        <a href="inicio.html" class="sidebar-brand" aria-label="Voltar ao Início Routebase">
+          <img src="../assets/images/logo.png" alt="Logo Routebase" class="sidebar-logo">
+          <span class="sidebar-brand-text">Routebase</span>
+        </a>
+
+        <nav class="sidebar-nav">
+          <a href="inicio.html" class="nav-item">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>Início</span>
+          </a>
+
+          <button type="button" class="nav-item" data-view="projetos">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>Projetos</span>
+          </button>
+
+          <button type="button" class="nav-item active" data-view="tarefas">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+              <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+              <rect x="14" y="14" width="7" height="7" rx="1"></rect>
+              <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+            </svg>
+            <span>Tarefas</span>
+          </button>
+
+          <button type="button" class="nav-item" data-view="membros">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            <span>Membros</span>
+          </button>
+
+          <button type="button" class="nav-item" data-view="configuracoes">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span>Configurações</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- Ilustração de folha no canto inferior esquerdo da Sidebar -->
+      <img src="../assets/images/folha_ilustracao.png" alt="" aria-hidden="true" class="sidebar-leaf-decor">
+    </aside>
+
+    <!-- ================= ÁREA DIREITA (TOPBAR + SUBHEADER + KANBAN) ================= -->
+    <div class="workspace-main">
+      <!-- TOPBAR SUPERIOR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button type="button" class="mobile-menu-btn" id="toggleSidebarBtn" aria-label="Abrir menu lateral">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          <h1 class="env-header-title" id="ambienteTitulo">Carregando ambiente...</h1>
+        </div>
+
+        <!-- Direita: Sino de Notificações + Avatar com Popover de Perfil -->
+        <div class="topbar-actions">
+          <!-- Popover de Notificações -->
+          <div class="popover-wrapper" id="notificationsWrapper">
+            <button
+              type="button"
+              class="icon-btn-bell"
+              id="openNotificationsBtn"
+              aria-expanded="false"
+              aria-controls="notificationsPopover"
+              aria-label="Abrir Notificações"
+              title="Notificações"
+            >
+              <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+              </svg>
+              <span class="bell-badge" id="bellBadge" hidden></span>
+            </button>
+
+            <div class="header-popover notifications-popover" id="notificationsPopover" role="dialog" aria-label="Notificações">
+              <div class="popover-header">
+                <h3 class="popover-title">Notificações</h3>
+                <span class="popover-badge-count" id="notifTotalBadge">0</span>
+              </div>
+              <div class="notifications-body" id="notificationsBody">
+                <div class="notifications-empty-state">
+                  <div class="empty-bell-circle" aria-hidden="true">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                      <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                      <line x1="2" y1="2" x2="22" y2="22"></line>
+                    </svg>
+                  </div>
+                  <p class="notifications-empty-text">Suas notificações vão aparecer aqui</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Popover de Perfil do Usuário -->
+          <div class="popover-wrapper" id="profileWrapper">
+            <button
+              type="button"
+              class="avatar-circle"
+              id="userAvatarBtn"
+              aria-expanded="false"
+              aria-controls="profilePopover"
+              aria-label="Menu do usuário"
+              title="Conta"
+            >
+              <img id="headerAvatarImg" class="avatar-img" alt="Foto de perfil" hidden>
+              <span id="userInitials">--</span>
+            </button>
+
+            <div class="header-popover profile-popover" id="profilePopover" role="dialog" aria-label="Perfil do usuário">
+              <div class="profile-avatar-section">
+                <div class="profile-avatar-wrap">
+                  <div class="profile-avatar-large">
+                    <img id="dropdownAvatarImg" class="avatar-img" alt="Foto de perfil" hidden>
+                    <span id="dropdownUserInitials">--</span>
+                  </div>
+                  <button type="button" class="btn-edit-avatar" id="triggerPhotoUploadBtn" title="Alterar foto de perfil" aria-label="Alterar foto de perfil">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+                    </svg>
+                  </button>
+                </div>
+                <input type="file" id="profilePhotoInput" accept="image/*" hidden>
+              </div>
+
+              <div class="user-dropdown-info">
+                <strong id="dropdownUserName">Usuário</strong>
+                <span id="dropdownUserEmail">usuario@email.com</span>
+                <div class="user-env-counter" id="dropdownEnvCount">0 ambientes</div>
+              </div>
+
+              <div class="user-dropdown-divider"></div>
+
+              <button type="button" class="user-dropdown-logout" id="logoutBtn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Sair da conta
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- SUBHEADER / BARRA DE FERRAMENTAS DO QUADRO -->
+      <section class="board-toolbar" aria-label="Controles do Quadro">
+        <div class="board-meta-left">
+          <span class="env-deadline-pill" id="ambientePrazoBadge">Prazo: Sem data definida</span>
+        </div>
+
+        <div class="board-tools-right">
+          <!-- Indicador / Botão Progresso -->
+          <div class="progress-pill" id="progressIndicator" title="Percentual de tarefas concluídas">
+            <span class="progress-label">Progresso</span>
+            <div class="progress-mini-track">
+              <div class="progress-mini-fill" id="progressBarFill" style="width: 0%;"></div>
+            </div>
+            <strong class="progress-percent" id="progressPercentText">0%</strong>
+          </div>
+
+          <!-- Botão Verde-Musgo: Criar Tarefa -->
+          <button type="button" class="btn-create-task" id="openCreateTaskModalBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            <span>Criar Tarefa</span>
+          </button>
+
+          <!-- Botão Ícone de Chave: Código de Convite -->
+          <button type="button" class="btn-key-code" id="openInviteCodeModalBtn" title="Código de Convite da Sala" aria-label="Ver código de convite">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
+            </svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- ================= ÁREA PRINCIPAL: QUADRO KANBAN DE 3 COLUNAS ================= -->
+      <main class="board-canvas">
+        <!-- Estado de Carregamento -->
+        <div class="board-loading" id="boardLoading">
+          <div class="spinner"></div>
+          <p>Carregando tarefas do ambiente...</p>
+        </div>
+
+        <!-- View 1: Quadro Kanban (Padrão) -->
+        <div class="kanban-grid" id="kanbanView">
+          <!-- COLUNA 1: A FAZER / REVISÃO -->
+          <section class="kanban-column" data-status="A_FAZER">
+            <header class="column-header">
+              <div class="column-title-group">
+                <h2>A Fazer / Revisão</h2>
+                <span class="column-count" id="countAFazer">0</span>
+              </div>
+              <button type="button" class="column-add-btn" data-quick-status="A_FAZER" title="Nova tarefa em A Fazer">+</button>
+            </header>
+            <div class="column-cards-list" id="colAFazer" data-status="A_FAZER"></div>
+          </section>
+
+          <!-- COLUNA 2: EM ANDAMENTO -->
+          <section class="kanban-column" data-status="EM_ANDAMENTO">
+            <header class="column-header">
+              <div class="column-title-group">
+                <h2>Em andamento</h2>
+                <span class="column-count" id="countEmAndamento">0</span>
+              </div>
+              <button type="button" class="column-add-btn" data-quick-status="EM_ANDAMENTO" title="Nova tarefa em Em Andamento">+</button>
+            </header>
+            <div class="column-cards-list" id="colEmAndamento" data-status="EM_ANDAMENTO"></div>
+          </section>
+
+          <!-- COLUNA 3: CONCLUÍDO -->
+          <section class="kanban-column" data-status="CONCLUIDA">
+            <header class="column-header">
+              <div class="column-title-group">
+                <h2>Concluído</h2>
+                <span class="column-count" id="countConcluida">0</span>
+              </div>
+              <button type="button" class="column-add-btn" data-quick-status="CONCLUIDA" title="Nova tarefa em Concluído">+</button>
+            </header>
+            <div class="column-cards-list" id="colConcluida" data-status="CONCLUIDA"></div>
+          </section>
+        </div>
+
+        <!-- View Auxiliar para abas Projetos / Membros / Configurações -->
+        <section class="secondary-view" id="secondaryView" hidden></section>
+      </main>
+    </div>
+  </div>
+
+  <!-- ================= MODAL 1: CRIAR TAREFA ================= -->
+  <div class="modal-overlay" id="createTaskModal" aria-hidden="true" role="dialog" aria-labelledby="createTaskTitle">
+    <div class="modal-card">
+      <button type="button" class="modal-close" data-close-modal aria-label="Fechar janela">&times;</button>
+
+      <div class="modal-header">
+        <span class="modal-tag">Nova Entrega</span>
+        <h3 id="createTaskTitle">Criar Tarefa</h3>
+        <p>Adicione uma atividade ao quadro e defina prazo, cor e responsável.</p>
+      </div>
+
+      <form id="createTaskForm" class="modal-form" novalidate>
+        <div class="form-group">
+          <label for="taskTituloInput">Título da Tarefa *</label>
+          <input type="text" id="taskTituloInput" placeholder="Ex: Desenvolver Telas de Login" maxlength="120" required>
+          <span class="field-error" id="taskTituloError"></span>
+        </div>
+
+        <div class="form-group">
+          <label for="taskDescInput">Descrição <span class="label-opt">(opcional)</span></label>
+          <textarea id="taskDescInput" rows="3" placeholder="Detalhes técnicos, critérios de aceite ou observações..."></textarea>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="taskDataInput">Data Limite</label>
+            <input type="date" id="taskDataInput">
+          </div>
+
+          <div class="form-group">
+            <label for="taskStatusInput">Coluna Inicial</label>
+            <select id="taskStatusInput">
+              <option value="A_FAZER">A Fazer / Revisão</option>
+              <option value="EM_ANDAMENTO">Em andamento</option>
+              <option value="CONCLUIDA">Concluído</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Seletor Visual de Cor do Cartão -->
+        <div class="form-group">
+          <label>Cor do Cartão</label>
+          <div class="color-swatches-row" id="taskColorSwatches">
+            <button type="button" class="swatch-btn selected" data-color="indigo" style="background:#9EA6F0;" title="Índigo"></button>
+            <button type="button" class="swatch-btn" data-color="teal" style="background:#56B5B0;" title="Turquesa"></button>
+            <button type="button" class="swatch-btn" data-color="amber" style="background:#E0B83B;" title="Âmbar"></button>
+            <button type="button" class="swatch-btn" data-color="sage" style="background:#85B77E;" title="Verde-Sálvia"></button>
+            <button type="button" class="swatch-btn" data-color="terracotta" style="background:#D8844A;" title="Terracota"></button>
+            <button type="button" class="swatch-btn" data-color="blue" style="background:#749EE8;" title="Azul"></button>
+            <button type="button" class="swatch-btn" data-color="purple" style="background:#A68EEB;" title="Roxo"></button>
+          </div>
+        </div>
+
+        <div class="form-row-2">
+          <div class="form-group">
+            <label for="taskResponsavelInput">Responsável ID <span class="label-opt">(opcional)</span></label>
+            <input type="number" id="taskResponsavelInput" min="1" placeholder="Ex: 1">
+          </div>
+
+          <div class="form-group">
+            <label for="taskIndicadoInput">Indicado ID <span class="label-opt">(opcional)</span></label>
+            <input type="number" id="taskIndicadoInput" min="1" placeholder="Ex: 2">
+          </div>
+        </div>
+
+        <div class="alert-box" id="createTaskAlert" role="alert"></div>
+
+        <button type="submit" class="btn-primary-pill" id="createTaskSubmitBtn">
+          Adicionar ao Quadro
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL 2: INDICAR COLEGA ================= -->
+  <div class="modal-overlay" id="indicarModal" aria-hidden="true" role="dialog" aria-labelledby="indicarModalTitle">
+    <div class="modal-card modal-sm">
+      <button type="button" class="modal-close" data-close-modal aria-label="Fechar janela">&times;</button>
+
+      <div class="modal-header">
+        <span class="modal-tag tag-terracotta">Delegação</span>
+        <h3 id="indicarModalTitle">Indicar Colega</h3>
+        <p id="indicarTaskSubtitle">Informe o ID ou selecione um membro da equipe.</p>
+      </div>
+
+      <form id="indicarForm" class="modal-form" novalidate>
+        <input type="hidden" id="indicarTarefaId">
+        <div class="form-group">
+          <label for="indicarUsuarioIdInput">ID do Colega (indicado_id) *</label>
+          <input type="number" id="indicarUsuarioIdInput" min="1" placeholder="Digite o ID do usuário" required>
+        </div>
+
+        <div id="membrosRapidosLista" class="members-quick-chips"></div>
+
+        <div class="alert-box" id="indicarAlert" role="alert"></div>
+
+        <button type="submit" class="btn-terracotta-pill" id="indicarSubmitBtn">
+          Enviar Indicação
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL 3: GERENCIAR LINKS DA TAREFA ================= -->
+  <div class="modal-overlay" id="linksModal" aria-hidden="true" role="dialog" aria-labelledby="linksModalTitle">
+    <div class="modal-card">
+      <button type="button" class="modal-close" data-close-modal aria-label="Fechar janela">&times;</button>
+
+      <div class="modal-header">
+        <span class="modal-tag">Anexos e Referências</span>
+        <h3 id="linksModalTitle">Links da Tarefa</h3>
+        <p id="linksTaskSubtitle">Compartilhe documentos, repositórios ou protótipos.</p>
+      </div>
+
+      <form id="addLinkForm" class="modal-form" novalidate>
+        <input type="hidden" id="linksTarefaId">
+        <div class="form-group">
+          <label for="linkTituloInput">Título do Link *</label>
+          <input type="text" id="linkTituloInput" placeholder="Ex: Protótipo no Figma" required>
+        </div>
+        <div class="form-group">
+          <label for="linkUrlInput">URL *</label>
+          <input type="url" id="linkUrlInput" placeholder="https://..." required>
+        </div>
+        <div class="alert-box" id="linksAlert" role="alert"></div>
+        <button type="submit" class="btn-primary-pill" id="addLinkSubmitBtn">Salvar Link</button>
+      </form>
+
+      <div class="links-list-divider"></div>
+      <div class="task-links-container" id="taskLinksList">
+        <p class="links-empty-msg">Nenhum link anexado ainda.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL 4: CÓDIGO DE CONVITE (CHAVE) ================= -->
+  <div class="modal-overlay" id="inviteCodeModal" aria-hidden="true" role="dialog" aria-labelledby="inviteModalTitle">
+    <div class="modal-card modal-sm">
+      <button type="button" class="modal-close" data-close-modal aria-label="Fechar janela">&times;</button>
+
+      <div class="modal-header">
+        <span class="modal-tag">Acesso da Equipe</span>
+        <h3 id="inviteModalTitle">Código de Convite</h3>
+        <p>Compartilhe este código de 6 dígitos para novos membros entrarem na sala.</p>
+      </div>
+
+      <div class="invite-code-box">
+        <span class="invite-code-value" id="modalInviteCodeText">------</span>
+        <button type="button" class="btn-copy-code" id="copyRoomCodeBtn">Copiar</button>
+      </div>
+
+      <div class="alert-box" id="inviteCodeAlert" role="alert" style="margin-bottom: 12px;"></div>
+
+      <button type="button" class="btn-outline-pill" id="regenerateCodeBtn">
+        Gerar Novo Código
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast de Feedback -->
+  <div class="toast-notification" id="toastNotification" role="status" aria-live="polite"></div>
+
+  <script src="../javascript/ambiente.js"></script>
+</body>
+</html>
