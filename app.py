@@ -110,6 +110,40 @@ def excluir_ambiente(ambiente_id):
     executar_query("DELETE FROM AmbienteTrabalho WHERE id = ?", (ambiente_id,))
     return jsonify({"mensagem": "Ambiente excluído"}), 200
 
+@app.route('/api/ambientes/<int:ambiente_id>', methods=['GET'])
+def obter_ambiente(ambiente_id):
+    row = executar_query("SELECT * FROM AmbienteTrabalho WHERE id = ?", (ambiente_id,), fetch='one')
+    if not row:
+        return jsonify({"erro": "Ambiente não encontrado"}), 404
+
+    ambiente = AmbienteTrabalho(
+        id=row['id'],
+        nome=row['nome'],
+        descricao=row['descricao'],
+        data_entrega=row['data_entrega'],
+        codigo_convite=row['codigo_convite']
+    )
+    return jsonify(ambiente.to_dict()), 200
+
+
+@app.route('/api/tarefas/ambiente/<int:ambiente_id>', methods=['GET'])
+def listar_tarefas_ambiente(ambiente_id):
+    rows = executar_query("SELECT * FROM Tarefa WHERE ambiente_id = ?", (ambiente_id,), fetch='all')
+    tarefas = [
+        Tarefa(
+            id=r['id'],
+            titulo=r['titulo'],
+            descricao=r['descricao'],
+            data_limite=r['data_limite'],
+            status=r['status'],
+            ambiente_id=r['ambiente_id'],
+            responsavel_id=r['responsavel_id'],
+            indicado_id=r['indicado_id']
+        ).to_dict() for r in rows
+    ]
+    return jsonify(tarefas), 200
+
+
 
 @app.route('/api/ambientes/<int:ambiente_id>/gerar-codigo', methods=['POST'])
 def regenerar_codigo_convite(ambiente_id):
@@ -174,6 +208,13 @@ def atualizar_status_tarefa(tarefa_id):
 
     executar_query("UPDATE Tarefa SET status = ? WHERE id = ?", (status, tarefa_id))
     return jsonify({"mensagem": "Status atualizado"}), 200
+
+@app.route('/api/tarefas/<int:tarefa_id>', methods=['DELETE'])
+def excluir_tarefa(tarefa_id):
+    executar_query("DELETE FROM LinkTarefa WHERE tarefa_id = ?", (tarefa_id,))
+    executar_query("DELETE FROM Tarefa WHERE id = ?", (tarefa_id,))
+    return jsonify({"mensagem": "Tarefa excluída com sucesso"}), 200
+
 
 # ==========================================
 # 3. ROTAS DA SEÇÃO "MEUS AVISOS"
