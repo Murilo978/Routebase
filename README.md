@@ -1,49 +1,58 @@
-# Routebase - MVP (Full-Stack: Back-end + Front-end Institucional e Autenticação)
+# Routebase — Plataforma de Gestão Colaborativa e Ambientes de Trabalho
 
-Plataforma web voltada para a organização e gestão colaborativa de trabalhos em grupo, com definição transparente de responsabilidades por aceite, ambientes compartilhados via código de convite e monitoramento de prazos.
+> 🌐 **Acesse o sistema rodando online:** [https://pythonanywhere.com](https://pythonanywhere.com)
+
+Plataforma web full-stack voltada para a organização e gestão colaborativa de trabalhos em grupo, com definição transparente de responsabilidades por aceite, ambientes compartilhados via código de convite, quadro Kanban interativo e monitoramento automático de prazos.
+
+---
 
 ## 🚀 Tecnologias Utilizadas
 
-### Back-end
+### Back-end & Banco de Dados
 - **Python 3** (Micro-framework **Flask**)
-- **SQLite** (Banco de dados relacional com suporte a chaves estrangeiras)
-- **Arquitetura DAO** (Data Access Object para persistência e CRUD completo)
-- **API RESTful** (Endpoints em JSON para usuários, ambientes, tarefas, avisos e links)
+- **SQLite** (Banco de dados relacional com suporte a chaves estrangeiras e integridade referencial)
+- **POO & Arquitetura DAO** (Classes de modelo em `models/` e objetos de acesso a dados em `daos/` para persistência e CRUD completo)
+- **API RESTful** (Endpoints em JSON para usuários, ambientes, participações, tarefas, links e painel de avisos)
 
 ### Front-end
-- **HTML5 Semântico** (Landing Page institucional e páginas dedicadas de acesso)
-- **CSS3 Moderno** (Design orgânico, responsivo, variáveis CSS, Flexbox e CSS Grid)
-- **JavaScript Puro (ES6+)** (Fetch API para integração com o Flask, validações, controle de modais e persistência de sessão via `localStorage`)
+- **HTML5 Semântico** (Landing Page institucional, telas de autenticação, lobby de ambientes e quadro Kanban)
+- **CSS3 Moderno** (Design orgânico, responsivo, Flexbox, CSS Grid, modais e popovers interativos)
+- **JavaScript Puro (ES6+)** (Fetch API para consumo assíncrono das rotas Flask, manipulação dinâmica do DOM e persistência de sessão via `localStorage`)
+
+---
 
 ## 📁 Estrutura Atualizada do Projeto
 
 ```text
-routebase/
+Routebase/
 ├── app.py                      # Servidor Flask e rotas completas da API REST
-├── database.py                 # Script de inicialização e tabelas do banco SQLite
+├── database.py                 # Script de inicialização e criação das tabelas no SQLite
 ├── requirements.txt            # Dependências do projeto Python
 │
 ├── index.html                  # Landing Page institucional de apresentação da plataforma
-├── style.css                   # Estilos da Landing Page e modais interativos
-├── script.js                   # Lógica de navegação, modais e integração da Landing Page
+├── style.css                   # Estilos da Landing Page
+├── script.js                   # Lógica de navegação e interatividade da Landing Page
 │
 ├── pages/                      # Páginas exclusivas da aplicação
-│   ├── login.html              # Tela exclusiva de Login ("Acessar Sua Rota")
-│   └── cadastro.html           # Tela exclusiva de Cadastro ("Criar Nova Base")
+│   ├── login.html              # Tela de Login ("Acessar Sua Rota")
+│   ├── cadastro.html           # Tela de Cadastro ("Criar Nova Base")
+│   ├── inicio.html             # Lobby inicial (Criar ambiente, entrar por código, perfil e avisos)
+│   └── ambiente.html           # Painel interno do ambiente (Quadro Kanban e gestão de tarefas)
 │
 ├── estilos/                    # Folhas de estilo das páginas internas
 │   ├── login.css               # Estilização da tela de Login
-│   └── cadastro.css            # Estilização da tela de Cadastro
+│   ├── cadastro.css            # Estilização da tela de Cadastro
+│   ├── inicio.css              # Estilização do lobby, popovers de perfil/notificações e modais
+│   └── ambiente.css            # Estilização da sidebar, colunas Kanban e cartões de tarefas
 │
-├── javascript/                 # Scripts de comportamento e consumo de API das páginas
-│   ├── login.js                # Validação, consulta de usuário e redirecionamento do Login
-│   └── cadastro.js             # Validação, trava contra e-mail duplicado e auto-login no Cadastro
+├── javascript/                 # Scripts de comportamento e integração com a API (Fetch)
+│   ├── login.js                # Autenticação de usuário e gravação de sessão no localStorage
+│   ├── cadastro.js             # Cadastro com trava contra duplicidade e auto-login
+│   ├── inicio.js               # Criação/entrada em ambientes, troca de avatar e painel de avisos
+│   └── ambiente.js             # Carregamento do Kanban, criação, movimentação, aceite e exclusão de tarefas
 │
-├── assets/                     # Recursos visuais e mídias locais
-│   ├── images/                 # Logotipo, prints do painel e ilustrações orgânicas
-│   └── icons/                  # Ícones dos pilares e funcionalidades
-│
-├── docs/                       # Documentação do projeto, sitemap e wireframes
+├── assets/                     # Recursos visuais, logotipo e ilustrações orgânicas
+├── docs/                       # Documentação do projeto, diagramas UML, sitemap e wireframes
 │
 ├── models/                     # Classes de modelo (POO) das entidades
 │   ├── usuario.py
@@ -58,42 +67,62 @@ routebase/
     ├── participacao_dao.py
     ├── tarefa_dao.py
     └── link_tarefa_dao.py
-````
-✨ O que foi implementado na etapa atual
+```
 
-Site Institucional (index.html, style.css, script.js): Vitrine pública da plataforma com identidade visual orgânica, menus dropdown interativos, seção Hero com demonstração do painel, pilares de valor, fluxo passo a passo e modais de acesso rápido.
+---
 
-Página Exclusiva de Login (pages/login.html): Interface dedicada conectada via fetch() ao back-end Flask para validar usuários cadastrados por nome e e-mail, armazenar a sessão no localStorage e redirecionar para pages/inicio.html.
+## ✨ Funcionalidades Implementadas (Sistema Completo)
 
-Página Exclusiva de Cadastro (pages/cadastro.html): Formulário completo com aceite obrigatório dos Termos de Uso, trava contra contas duplicadas (verificando e-mails já existentes no banco antes de gravar) e auto-login imediato após o cadastro.
+- **Site Institucional (`index.html`):** Vitrine pública de apresentação da plataforma com identidade visual orgânica e acesso rápido para cadastro ou login.
+- **Autenticação e Cadastro (`pages/login.html` e `pages/cadastro.html`):** Criação de conta com validação contra e-mails duplicados, auto-login imediato e persistência de sessão via `localStorage`.
+- **Lobby e Gestão de Ambientes (`pages/inicio.html`):**
+  - Criação de novos ambientes de trabalho com geração automática de **código de convite** único de 6 caracteres.
+  - Entrada em ambientes existentes através do código de convite.
+  - Listagem dinâmica dos ambientes vinculados ao usuário.
+  - **Perfil e Notificações:** Menu de perfil com alteração de foto (avatar) e painel de **Meus Avisos** (indicações pendentes com aceite/recusa, tarefas a vencer e atrasadas).
+- **Quadro Kanban e Tarefas (`pages/ambiente.html`):**
+  - Visualização organizada em colunas (**A Fazer**, **Em Andamento** e **Concluída**).
+  - Criação, atualização de status, indicação de colegas, vínculo de links/anexos e exclusão de tarefas integrada em tempo real ao banco de dados SQLite.
 
-⚙️ Como Executar o Projeto
-Clone o repositório ou faça o download dos arquivos.
+---
 
-Instale as dependências do back-end executando:
+## ⚙️ Como Executar o Projeto Localmente
 
-Bash
-pip install -r requirements.txt
-(Certifique-se de ter o flask-cors instalado caso abra o front-end via Live Server ou arquivo local).
+1. **Clone o repositório:**
+   ```bash
+   git clone https://github.com
+   cd Routebase
+   ```
 
-Inicie o servidor Flask:
+2. **Instale as dependências do back-end:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-Bash
-python app.py
-O servidor estará rodando em http://127.0.0.1:5000. O banco de dados database.db será criado automaticamente na primeira execução com todas as tabelas inicializadas.
+3. **Inicialize o banco de dados SQLite:**
+   ```bash
+   python database.py
+   ```
+   *(Este comando cria o arquivo `database.db` com todas as tabelas e relacionamentos prontos).*
 
-Acesse o Front-end:
+4. **Inicie o servidor Flask:**
+   ```bash
+   python app.py
+   ```
 
-Abra o arquivo index.html no navegador (ou via extensão Live Server) para visualizar a página institucional.
+5. **Acesse a aplicação:**
+   Abra o navegador e acesse **`http://127.0.0.1:5000`**.
 
-Navegue diretamente para pages/login.html ou pages/cadastro.html para testar o fluxo de autenticação conectado à API.
+---
 
-📄 Documentação do Projeto
-Para consultar as regras de negócio, sitemap, wireframes e a modelagem conceitual/diagrama de classes:
+## 📄 Documentação do Projeto
 
-Acesse a pasta /docs para os artefatos visuais e de design.
+Para consultar as regras de negócio, diagramas de classes (UML), modelagem do banco de dados, sitemap e wireframes:
+- Acesse a pasta **`/docs`** neste repositório.
 
-Consulte a Documentação de Especificação e Arquitetura completa.
+---
 
-👨‍🏫 Colaboradores e Avaliação
-Professor: leonardo.stephan@eaportal.org
+## 👨‍🏫 Projeto Integrado — DWS + POO + BD
+
+- **Avaliação e Colaboração:** `leonardo.stephan@eaportal.org`
+- **Deploy em Produção (PythonAnywhere):** [https://murilo564.pythonanywhere.com]
