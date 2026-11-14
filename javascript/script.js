@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   // URL base da API Flask (ajuste caso rode em outra porta ou domínio)
-  const API_BASE_URL = '';
+  const API_BASE_URL = '/api';
 
   /* ==========================================================================
      1. MENU MOBILE (HAMBÚRGUER) E DROPDOWNS INTERATIVOS

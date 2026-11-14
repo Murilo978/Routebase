@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const API_BASE_URL = '';
+  const API_BASE_URL = '/api';
 
   /* ==========================================================================
      1. VALIDAÇÃO DE SESSÃO E IDENTIFICAÇÃO DO AMBIENTE PELA URL
