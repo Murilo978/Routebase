@@ -151,6 +151,26 @@ def regenerar_codigo_convite(ambiente_id):
     executar_query("UPDATE AmbienteTrabalho SET codigo_convite = ? WHERE id = ?", (novo_codigo, ambiente_id))
     return jsonify({"mensagem": "Código atualizado", "novo_codigo": novo_codigo}), 200
 
+@app.route('/api/ambientes/<int:ambiente_id>/membros', methods=['GET'])
+def listar_membros_ambiente(ambiente_id):
+    rows = executar_query("""
+        SELECT u.id, u.nome, u.email, u.foto_perfil, p.papel
+        FROM Usuario u
+        JOIN Participacao p ON u.id = p.usuario_id
+        WHERE p.ambiente_id = ?
+    """, (ambiente_id,), fetch='all')
+
+    membros = [
+        {
+            "id": r['id'],
+            "nome": r['nome'],
+            "email": r['email'],
+            "foto_perfil": r['foto_perfil'],
+            "papel": r['papel']
+        } for r in rows
+    ]
+    return jsonify(membros), 200
+
 # ==========================================
 # 2. ROTAS DE TAREFAS
 # ==========================================
@@ -335,6 +355,17 @@ def cadastrar_usuario():
             "foto_perfil": novo['foto_perfil']
         }
     }), 201
+
+@app.route('/api/usuarios/<int:usuario_id>/foto', methods=['PUT'])
+def atualizar_foto_usuario(usuario_id):
+    dados = request.get_json() or {}
+    foto = dados.get('foto_perfil')
+    if not foto:
+        return jsonify({"erro": "Imagem inválida"}), 400
+
+    executar_query("UPDATE Usuario SET foto_perfil = ? WHERE id = ?", (foto, usuario_id))
+    return jsonify({"mensagem": "Foto atualizada no banco"}), 200
+
 
 if __name__ == '__main__':
     app.run(debug=True)
