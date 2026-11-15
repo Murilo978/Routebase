@@ -512,6 +512,170 @@ body {
   border-radius: 999px;
 }
 
+.board-meta-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Fileira de Avatares dos Membros na Toolbar */
+.toolbar-members-group {
+  display: inline-flex;
+  align-items: center;
+  padding-left: 6px;
+}
+
+.toolbar-member-avatar {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: var(--primary-dark);
+  color: #FFFFFF;
+  border: 2px solid var(--bg-page);
+  margin-left: -8px;
+  font-family: var(--font-heading);
+  font-size: 0.76rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(30, 36, 30, 0.12);
+  transition: transform 0.18s ease, z-index 0s;
+}
+
+.toolbar-member-avatar:first-child {
+  margin-left: 0;
+}
+
+.toolbar-member-avatar:hover {
+  transform: translateY(-3px) scale(1.08);
+  z-index: 10;
+  border-color: var(--accent-green);
+}
+
+.toolbar-member-avatar.is-creator {
+  background-color: var(--terracotta);
+}
+
+.toolbar-member-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.toolbar-members-count-tag {
+  margin-left: 8px;
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+/* Aba Lateral: Lista Completa de Membros */
+.members-view-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-bottom: 16px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.members-cards-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 14px;
+}
+
+.member-directory-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+}
+
+.member-directory-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.member-directory-avatar {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background-color: var(--primary-dark);
+  color: #FFFFFF;
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.member-directory-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.member-directory-info {
+  min-width: 0;
+}
+
+.member-directory-info strong {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 0.94rem;
+  font-weight: 800;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.member-directory-info span {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.member-role-pill {
+  flex-shrink: 0;
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.member-role-pill.role-criador {
+  background-color: var(--terracotta-light);
+  color: var(--terracotta);
+}
+
+.member-role-pill.role-participante {
+  background-color: var(--accent-green-light);
+  color: var(--primary-dark);
+}
+
 .board-tools-right {
   display: flex;
   align-items: center;
