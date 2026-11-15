@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const FOTO_STORAGE_KEY = `routebase_foto_perfil_${usuarioId}`;
 
   function aplicarFotoPerfil(dataUrl) {
-    if (dataUrl) {
+    if (dataUrl && dataUrl !== 'default.png') {
       headerAvatarImg.src = dataUrl;
       headerAvatarImg.hidden = false;
       document.getElementById('userInitials').hidden = true;
@@ -71,7 +71,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  aplicarFotoPerfil(localStorage.getItem(FOTO_STORAGE_KEY) || usuarioLogado.foto_data_url || null);
+  const fotoInicialCache =
+    localStorage.getItem(FOTO_STORAGE_KEY) ||
+    (usuarioLogado.foto_perfil && usuarioLogado.foto_perfil !== 'default.png' ? usuarioLogado.foto_perfil : null) ||
+    usuarioLogado.foto_data_url ||
+    null;
+
+  aplicarFotoPerfil(fotoInicialCache);
 
   triggerPhotoUploadBtn.addEventListener('click', (e) => {
     e.stopPropagation();
@@ -83,16 +89,34 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!file || !file.type.startsWith('image/')) return;
 
     const reader = new FileReader();
-    reader.onload = (e) => {
-      const base64Image = e.target.result;
+    reader.onload = async (e) => {
+      const imagemBase64 = e.target.result;
+
       try {
-        localStorage.setItem(FOTO_STORAGE_KEY, base64Image);
-        usuarioLogado.foto_data_url = base64Image;
+        localStorage.setItem(FOTO_STORAGE_KEY, imagemBase64);
+        usuarioLogado.foto_perfil = imagemBase64;
+        usuarioLogado.foto_data_url = imagemBase64;
         localStorage.setItem('routebase_usuario', JSON.stringify(usuarioLogado));
-        aplicarFotoPerfil(base64Image);
+        aplicarFotoPerfil(imagemBase64);
+
+        const response = await fetch(`${API_BASE_URL}/usuarios/${usuarioId}/foto`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ foto_perfil: imagemBase64 })
+        });
+
+        if (!response.ok) {
+          throw new Error('Falha ao sincronizar foto com o servidor.');
+        }
+
         mostrarToast('Foto de perfil atualizada!');
-      } catch (_) {
-        mostrarToast('Imagem muito grande para salvar no navegador.');
+        await carregarMembrosAmbiente();
+      } catch (err) {
+        mostrarToast(
+          err.message && err.message.includes('servidor')
+            ? 'Foto salva localmente, mas houve erro ao enviar ao servidor.'
+            : 'Imagem muito grande para salvar no navegador.'
+        );
       }
     };
     reader.readAsDataURL(file);
@@ -233,17 +257,161 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ==========================================================================
-     4. CARREGAR DADOS DO AMBIENTE, TAREFAS E AVISOS
+     4. CARREGAR DADOS DO AMBIENTE, MEMBROS, TAREFAS E AVISOS
      ========================================================================== */
   const ambienteTituloEl = document.getElementById('ambienteTitulo');
   const ambientePrazoBadge = document.getElementById('ambientePrazoBadge');
   const boardLoading = document.getElementById('boardLoading');
 
+  function normalizarPapelMembro(membro) {
+    const papelRaw = String(membro.papel || '').toLowerCase();
+    const ehCriador =
+      papelRaw === 'criador' ||
+      (ambienteAtual && String(ambienteAtual.criador_id || ambienteAtual.usuario_id) === String(membro.id));
+    return ehCriador ? 'Criador' : 'Participante';
+  }
+
+  function obterFotoValidaMembro(membro) {
+    if (
+      membro &&
+      membro.foto_perfil &&
+      String(membro.foto_perfil).trim() !== '' &&
+      String(membro.foto_perfil).trim() !== 'default.png'
+    ) {
+      return membro.foto_perfil;
+    }
+    if (membro && String(membro.id) === String(usuarioId)) {
+      const cacheLocal = localStorage.getItem(FOTO_STORAGE_KEY);
+      if (cacheLocal && cacheLocal !== 'default.png') return cacheLocal;
+    }
+    return null;
+  }
+
+  function renderizarAvataresToolbar() {
+    const container = document.getElementById('toolbarMembersAvatars');
+    if (!container) return;
+
+    if (!Array.isArray(membrosAmbiente) || membrosAmbiente.length === 0) {
+      container.innerHTML = '';
+      return;
+    }
+
+    const avataresHtml = membrosAmbiente
+      .map((m) => {
+        const papel = normalizarPapelMembro(m);
+        const iniciaisMembro = gerarIniciais(m.nome);
+        const foto = obterFotoValidaMembro(m);
+
+        return `
+          <div
+            class="toolbar-member-avatar ${papel === 'Criador' ? 'is-creator' : ''}"
+            title="${escaparHTML(m.nome)} — ${papel}"
+            aria-label="${escaparHTML(m.nome)} (${papel})"
+          >
+            ${foto ? `<img src="${escaparHTML(foto)}" alt="${escaparHTML(m.nome)}">` : `<span>${escaparHTML(iniciaisMembro)}</span>`}
+          </div>
+        `;
+      })
+      .join('');
+
+    const totalTexto = `${membrosAmbiente.length} ${membrosAmbiente.length === 1 ? 'membro' : 'membros'}`;
+    container.innerHTML = `${avataresHtml}<span class="toolbar-members-count-tag">${totalTexto}</span>`;
+  }
+
+  function preencherSelectsMembros() {
+    const respSelect = document.getElementById('taskResponsavelSelect');
+    const indSelect = document.getElementById('taskIndicadoSelect');
+    if (!respSelect || !indSelect) return;
+
+    respSelect.innerHTML = '<option value="">Sem responsável</option>';
+    indSelect.innerHTML = '<option value="">Ninguém indicado</option>';
+
+    membrosAmbiente.forEach((m) => {
+      const papel = normalizarPapelMembro(m);
+      const label = `${m.nome} (${papel})`;
+
+      const optResp = document.createElement('option');
+      optResp.value = m.id;
+      optResp.textContent = label;
+      respSelect.appendChild(optResp);
+
+      const optInd = document.createElement('option');
+      optInd.value = m.id;
+      optInd.textContent = label;
+      indSelect.appendChild(optInd);
+    });
+  }
+
+  function renderizarAbaMembros() {
+    if (!Array.isArray(membrosAmbiente) || membrosAmbiente.length === 0) {
+      return `
+        <div class="members-view-header">
+          <div>
+            <h2>Membros da Equipe</h2>
+            <p>Nenhum integrante retornado pelo servidor.</p>
+          </div>
+        </div>
+      `;
+    }
+
+    const cardsHtml = membrosAmbiente
+      .map((m) => {
+        const papel = normalizarPapelMembro(m);
+        const ehCriador = papel === 'Criador';
+        const iniciaisMembro = gerarIniciais(m.nome);
+        const foto = obterFotoValidaMembro(m);
+
+        return `
+          <div class="member-directory-card">
+            <div class="member-directory-left">
+              <div class="member-directory-avatar">
+                ${foto ? `<img src="${escaparHTML(foto)}" alt="${escaparHTML(m.nome)}">` : `<span>${escaparHTML(iniciaisMembro)}</span>`}
+              </div>
+              <div class="member-directory-info">
+                <strong>${escaparHTML(m.nome)}</strong>
+                <span>${escaparHTML(m.email || 'E-mail não informado')}</span>
+              </div>
+            </div>
+            <span class="member-role-pill ${ehCriador ? 'role-criador' : 'role-participante'}">
+              ${papel}
+            </span>
+          </div>
+        `;
+      })
+      .join('');
+
+    return `
+      <div class="members-view-header">
+        <div>
+          <h2>Membros da Equipe (${membrosAmbiente.length})</h2>
+          <p>Todos os integrantes ativos nesta sala de trabalho.</p>
+        </div>
+      </div>
+      <div class="members-cards-list">
+        ${cardsHtml}
+      </div>
+    `;
+  }
+
+  async function carregarMembrosAmbiente() {
+    try {
+      const resMembros = await fetch(`${API_BASE_URL}/ambientes/${ambienteId}/membros`);
+      if (!resMembros.ok) return;
+
+      const data = await resMembros.json();
+      membrosAmbiente = Array.isArray(data) ? data : (data.membros || []);
+
+      renderizarAvataresToolbar();
+      preencherSelectsMembros();
+    } catch (_) {
+      // Mantém lista atual caso ocorra falha de rede
+    }
+  }
+
   async function carregarAmbienteETarefas() {
     boardLoading.hidden = false;
 
     try {
-      // 1. Busca detalhes do ambiente (e lista do usuário para atualizar contador do perfil)
       const [resAmb, resListaUser] = await Promise.all([
         fetch(`${API_BASE_URL}/ambientes/${ambienteId}`).catch(() => null),
         fetch(`${API_BASE_URL}/ambientes/usuario/${usuarioId}`).catch(() => null)
@@ -261,9 +429,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (resAmb && resAmb.ok) {
         const ambData = await resAmb.json();
         ambienteAtual = ambData.ambiente || ambData;
-        if (Array.isArray(ambData.membros)) {
-          membrosAmbiente = ambData.membros;
-        }
       } else if (!ambienteAtual) {
         try {
           ambienteAtual = JSON.parse(localStorage.getItem('routebase_ambiente_atual'));
@@ -281,7 +446,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ambienteTituloEl.textContent = `Ambiente #${ambienteId}`;
       }
 
-      // 2. Busca tarefas do ambiente
+      await carregarMembrosAmbiente();
+
       const resTarefas = await fetch(`${API_BASE_URL}/tarefas/ambiente/${ambienteId}`);
       if (resTarefas.ok) {
         const tData = await resTarefas.json();
@@ -398,15 +564,17 @@ document.addEventListener('DOMContentLoaded', () => {
           mapaCores[String(tarefa.id)] ||
           CORES_DISPONIVEIS[(Number(tarefa.id) || idx) % CORES_DISPONIVEIS.length];
 
+        const membroResp = membrosAmbiente.find((m) => String(m.id) === String(tarefa.responsavel_id));
         const responsavelNome =
           tarefa.responsavel_nome ||
-          (tarefa.responsavel_id ? `ID #${tarefa.responsavel_id}` : 'Sem responsável');
+          (membroResp ? membroResp.nome : (tarefa.responsavel_id ? `ID #${tarefa.responsavel_id}` : 'Sem responsável'));
 
-        const iniciaisResp = tarefa.responsavel_nome
-          ? gerarIniciais(tarefa.responsavel_nome)
-          : tarefa.responsavel_id
-          ? `#${tarefa.responsavel_id}`
-          : '?';
+        const iniciaisResp =
+          tarefa.responsavel_nome || membroResp
+            ? gerarIniciais(responsavelNome)
+            : tarefa.responsavel_id
+            ? `#${tarefa.responsavel_id}`
+            : '?';
 
         const tagTexto =
           statusKey === 'CONCLUIDA'
@@ -555,8 +723,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const taskDescInput = document.getElementById('taskDescInput');
   const taskDataInput = document.getElementById('taskDataInput');
   const taskStatusInput = document.getElementById('taskStatusInput');
-  const taskResponsavelInput = document.getElementById('taskResponsavelInput');
-  const taskIndicadoInput = document.getElementById('taskIndicadoInput');
+  const taskResponsavelSelect = document.getElementById('taskResponsavelSelect');
+  const taskIndicadoSelect = document.getElementById('taskIndicadoSelect');
   const createTaskAlert = document.getElementById('createTaskAlert');
   let corSelecionada = 'indigo';
 
@@ -570,6 +738,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function abrirModalCriarTarefa(statusPadrao = 'A_FAZER') {
     createTaskForm.reset();
+    preencherSelectsMembros();
     taskStatusInput.value = statusPadrao;
     document.getElementById('taskTituloError').textContent = '';
     createTaskAlert.className = 'alert-box';
@@ -605,8 +774,8 @@ document.addEventListener('DOMContentLoaded', () => {
       data_limite: taskDataInput.value || null,
       status: taskStatusInput.value,
       ambiente_id: Number(ambienteId),
-      responsavel_id: taskResponsavelInput.value ? Number(taskResponsavelInput.value) : null,
-      indicado_id: taskIndicadoInput.value ? Number(taskIndicadoInput.value) : null
+      responsavel_id: taskResponsavelSelect && taskResponsavelSelect.value ? Number(taskResponsavelSelect.value) : null,
+      indicado_id: taskIndicadoSelect && taskIndicadoSelect.value ? Number(taskIndicadoSelect.value) : null
     };
 
     try {
@@ -942,15 +1111,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <p style="margin-top:8px;"><strong>Data de Entrega:</strong> ${formatarDataCurta(ambienteAtual && ambienteAtual.data_entrega)}</p>
         `;
       } else if (view === 'membros') {
-        const listaHtml =
-          membrosAmbiente.length > 0
-            ? membrosAmbiente.map((m) => `<li style="margin:6px 0;"><strong>${escaparHTML(m.nome)}</strong> — ${escaparHTML(m.email || '')} (ID #${m.id})</li>`).join('')
-            : `<li>Você (<strong>${escaparHTML(usuarioLogado.nome)}</strong> — ID #${usuarioId})</li>`;
-        secondaryView.innerHTML = `
-          <h2>Membros da Equipe</h2>
-          <p style="margin-bottom:12px;">Integrantes ativos nesta sala de trabalho:</p>
-          <ul style="padding-left:20px;">${listaHtml}</ul>
-        `;
+        secondaryView.innerHTML = renderizarAbaMembros();
       } else if (view === 'configuracoes') {
         secondaryView.innerHTML = `
           <h2>Configurações do Ambiente</h2>

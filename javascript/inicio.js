@@ -83,27 +83,38 @@ document.addEventListener('DOMContentLoaded', () => {
     profilePhotoInput.click();
   });
 
-  // Lê e aplica qualquer imagem escolhida pelo usuário
   profilePhotoInput.addEventListener('change', (event) => {
     const file = event.target.files && event.target.files[0];
-    if (!file) return;
-
-    if (!file.type.startsWith('image/')) {
-      mostrarToast('Por favor, selecione um arquivo de imagem válido.');
-      return;
-    }
+    if (!file || !file.type.startsWith('image/')) return;
 
     const reader = new FileReader();
-    reader.onload = (e) => {
-      const base64Image = e.target.result;
+    reader.onload = async (e) => {
+      const imagemBase64 = e.target.result;
+
       try {
-        localStorage.setItem(FOTO_STORAGE_KEY, base64Image);
-        usuarioLogado.foto_data_url = base64Image;
+        localStorage.setItem(FOTO_STORAGE_KEY, imagemBase64);
+        usuarioLogado.foto_perfil = imagemBase64;
+        usuarioLogado.foto_data_url = imagemBase64;
         localStorage.setItem('routebase_usuario', JSON.stringify(usuarioLogado));
-        aplicarFotoPerfil(base64Image);
-        mostrarToast('Foto de perfil atualizada!');
+        aplicarFotoPerfil(imagemBase64);
+
+        const response = await fetch(`${API_BASE_URL}/usuarios/${usuarioId}/foto`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ foto_perfil: imagemBase64 })
+        });
+
+        if (!response.ok) {
+          throw new Error('Falha ao sincronizar foto com o servidor.');
+        }
+
+        mostrarToast('Foto de perfil atualizada com sucesso!');
       } catch (err) {
-        mostrarToast('Imagem muito grande para salvar no navegador. Escolha uma menor.');
+        mostrarToast(
+          err.message && err.message.includes('servidor')
+            ? 'Foto salva localmente, mas houve erro ao enviar ao servidor.'
+            : 'Imagem muito grande para salvar no navegador.'
+        );
       }
     };
     reader.readAsDataURL(file);
@@ -605,6 +616,72 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (_) {
       // Falha silenciosa na consulta inicial de avisos se offline
+    }
+  }
+
+  async function carregarMeusAmbientes() {
+    const environmentsGrid = document.getElementById('environmentsGrid');
+    const emptyEnvironmentsState = document.getElementById('emptyEnvironmentsState');
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/ambientes/usuario/${usuarioId}`);
+      if (!response.ok) throw new Error('Erro ao buscar ambientes.');
+
+      const data = await response.json();
+      const ambientes = Array.isArray(data) ? data : (data.ambientes || []);
+
+      const envCountEl = document.getElementById('dropdownEnvCount');
+      if (envCountEl) {
+        envCountEl.textContent = `${ambientes.length} ${ambientes.length === 1 ? 'ambiente' : 'ambientes'}`;
+      }
+
+      if (ambientes.length === 0) {
+        environmentsGrid.innerHTML = '';
+        if (emptyEnvironmentsState) emptyEnvironmentsState.hidden = false;
+        return;
+      }
+
+      if (emptyEnvironmentsState) emptyEnvironmentsState.hidden = true;
+
+      environmentsGrid.innerHTML = ambientes
+        .map((amb) => {
+          const papelRaw = String(amb.papel || '').toLowerCase();
+          const ehCriador =
+            papelRaw === 'criador' ||
+            String(amb.criador_id || amb.usuario_id) === String(usuarioId);
+          const papelLabel = ehCriador ? 'Criador' : 'Integrante';
+          const badgeStyle = ehCriador
+            ? 'background:#FDF1EA; color:#B85D28; border:1px solid #F3D1BD;'
+            : 'background:#EBF0EA; color:#2D3E2D; border:1px solid #C8D7C5;';
+
+          return `
+            <article class="env-card" data-ambiente-id="${amb.id}" style="cursor:pointer;">
+              <div class="env-card-top" style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px;">
+                <span class="env-code-badge">#${amb.codigo_convite || 'SALA'}</span>
+                <span style="${badgeStyle} font-size:0.72rem; font-weight:800; padding:3px 10px; border-radius:999px;">
+                  ${papelLabel}
+                </span>
+              </div>
+              <h3 class="env-card-title">${amb.nome || `Ambiente #${amb.id}`}</h3>
+              <p class="env-card-desc">${amb.descricao || 'Sem descrição informada.'}</p>
+              <div class="env-card-footer">
+                <span>Entrega: ${amb.data_entrega ? String(amb.data_entrega).split('T')[0] : 'Sem data'}</span>
+                <span class="env-card-enter">Entrar &rarr;</span>
+              </div>
+            </article>
+          `;
+        })
+        .join('');
+
+      environmentsGrid.querySelectorAll('.env-card').forEach((card) => {
+        card.addEventListener('click', () => {
+          const id = card.dataset.ambienteId;
+          localStorage.setItem('routebase_ambiente_atual_id', String(id));
+          window.location.href = `ambiente.html?id=${id}`;
+        });
+      });
+    } catch (error) {
+      mostrarToast('Não foi possível carregar os ambientes.');
     }
   }
 
