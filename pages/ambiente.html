@@ -273,7 +273,7 @@
 
   <!-- ================= MODAL 1: CRIAR TAREFA ================= -->
   <div class="modal-overlay" id="createTaskModal" aria-hidden="true" role="dialog" aria-labelledby="createTaskTitle">
-    <div class="modal-card">
+    <div class="modal-card modal-content">
       <button type="button" class="modal-close" data-close-modal aria-label="Fechar janela">&times;</button>
 
       <div class="modal-header">
@@ -296,19 +296,10 @@
 
         <div class="form-row-2">
           <div class="form-group">
-            <label for="taskResponsavelSelect">Responsável <span class="label-opt">(opcional)</span></label>
-            <select id="taskResponsavelSelect">
-              <option value="">Sem responsável</option>
-            </select>
+            <label for="taskDataInput">Data Limite *</label>
+            <input type="date" id="taskDataInput" required>
+            <span class="field-error" id="taskDataError"></span>
           </div>
-
-          <div class="form-group">
-            <label for="taskIndicadoSelect">Indicar Colega <span class="label-opt">(opcional)</span></label>
-            <select id="taskIndicadoSelect">
-              <option value="">Ninguém indicado</option>
-            </select>
-          </div>
-        </div>
 
           <div class="form-group">
             <label for="taskStatusInput">Coluna Inicial</label>
@@ -336,25 +327,28 @@
 
         <div class="form-row-2">
           <div class="form-group">
-            <label for="taskResponsavelInput">Responsável ID <span class="label-opt">(opcional)</span></label>
-            <input type="number" id="taskResponsavelInput" min="1" placeholder="Ex: 1">
+            <label for="taskResponsavelSelect">Responsável <span class="label-opt">(opcional)</span></label>
+            <select id="taskResponsavelSelect">
+              <option value="">Sem responsável</option>
+            </select>
           </div>
 
           <div class="form-group">
-            <label for="taskIndicadoInput">Indicado ID <span class="label-opt">(opcional)</span></label>
-            <input type="number" id="taskIndicadoInput" min="1" placeholder="Ex: 2">
+            <label for="taskIndicadoSelect">Indicar Colega <span class="label-opt">(opcional)</span></label>
+            <select id="taskIndicadoSelect">
+              <option value="">Ninguém indicado</option>
+            </select>
           </div>
         </div>
 
         <div class="alert-box" id="createTaskAlert" role="alert"></div>
 
         <button type="submit" class="btn-primary-pill" id="createTaskSubmitBtn">
-          Adicionar ao Quadro
+          Criar Tarefa
         </button>
       </form>
     </div>
   </div>
-
   <!-- ================= MODAL 2: INDICAR COLEGA ================= -->
   <div class="modal-overlay" id="indicarModal" aria-hidden="true" role="dialog" aria-labelledby="indicarModalTitle">
     <div class="modal-card modal-sm">

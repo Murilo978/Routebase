@@ -716,15 +716,9 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ==========================================================================
      6. AÇÕES REAIS DA API DE TAREFAS (CRIAR, STATUS, ASSUMIR, INDICAR, LINKS)
      ========================================================================== */
-  // 6.1 Modal Criar Tarefa
+ // 6.1 Modal Criar Tarefa
   const createTaskModal = document.getElementById('createTaskModal');
   const createTaskForm = document.getElementById('createTaskForm');
-  const taskTituloInput = document.getElementById('taskTituloInput');
-  const taskDescInput = document.getElementById('taskDescInput');
-  const taskDataInput = document.getElementById('taskDataInput');
-  const taskStatusInput = document.getElementById('taskStatusInput');
-  const taskResponsavelSelect = document.getElementById('taskResponsavelSelect');
-  const taskIndicadoSelect = document.getElementById('taskIndicadoSelect');
   const createTaskAlert = document.getElementById('createTaskAlert');
   let corSelecionada = 'indigo';
 
@@ -732,50 +726,77 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('#taskColorSwatches .swatch-btn').forEach((b) => b.classList.remove('selected'));
       btn.classList.add('selected');
-      corSelecionada = btn.dataset.color;
+      corSelecionada = btn.dataset.color || 'indigo';
     });
   });
 
   function abrirModalCriarTarefa(statusPadrao = 'A_FAZER') {
+    if (!createTaskForm) return;
     createTaskForm.reset();
     preencherSelectsMembros();
-    taskStatusInput.value = statusPadrao;
-    document.getElementById('taskTituloError').textContent = '';
-    createTaskAlert.className = 'alert-box';
+
+    const statusEl = document.getElementById('taskStatusInput');
+    if (statusEl) statusEl.value = statusPadrao;
+
+    const tituloErrEl = document.getElementById('taskTituloError');
+    if (tituloErrEl) tituloErrEl.textContent = '';
+
+    const dataErrEl = document.getElementById('taskDataError');
+    if (dataErrEl) dataErrEl.textContent = '';
+
+    if (createTaskAlert) createTaskAlert.className = 'alert-box';
+
     abrirModal(createTaskModal);
-    setTimeout(() => taskTituloInput.focus(), 80);
+    setTimeout(() => document.getElementById('taskTituloInput')?.focus(), 80);
   }
 
-  document.getElementById('openCreateTaskModalBtn').addEventListener('click', () => abrirModalCriarTarefa('A_FAZER'));
+  document.getElementById('openCreateTaskModalBtn')?.addEventListener('click', () => abrirModalCriarTarefa('A_FAZER'));
   document.querySelectorAll('[data-quick-status]').forEach((btn) => {
     btn.addEventListener('click', () => abrirModalCriarTarefa(btn.dataset.quickStatus));
   });
 
-  createTaskForm.addEventListener('submit', async (e) => {
+  createTaskForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const tituloError = document.getElementById('taskTituloError');
-    tituloError.textContent = '';
-    createTaskAlert.className = 'alert-box';
 
-    const titulo = taskTituloInput.value.trim();
-    if (!titulo) {
-      tituloError.textContent = 'O título da tarefa é obrigatório.';
-      taskTituloInput.focus();
+    const tituloError = document.getElementById('taskTituloError');
+    const dataError = document.getElementById('taskDataError');
+    if (tituloError) tituloError.textContent = '';
+    if (dataError) dataError.textContent = '';
+    if (createTaskAlert) createTaskAlert.className = 'alert-box';
+
+    const tituloVal = (document.getElementById('taskTituloInput')?.value || '').trim();
+    const descricaoVal = (document.getElementById('taskDescInput')?.value || '').trim();
+    const dataLimiteVal = document.getElementById('taskDataInput')?.value || '';
+    const statusVal = document.getElementById('taskStatusInput')?.value || 'A_FAZER';
+    const responsavelVal = document.getElementById('taskResponsavelSelect')?.value || '';
+    const indicadoVal = document.getElementById('taskIndicadoSelect')?.value || '';
+
+    if (!tituloVal) {
+      if (tituloError) tituloError.textContent = 'O título da tarefa é obrigatório.';
+      document.getElementById('taskTituloInput')?.focus();
+      return;
+    }
+
+    if (!dataLimiteVal) {
+      if (dataError) dataError.textContent = 'A data limite é obrigatória.';
+      document.getElementById('taskDataInput')?.focus();
       return;
     }
 
     const submitBtn = document.getElementById('createTaskSubmitBtn');
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Salvando...';
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Salvando...';
+    }
 
     const payload = {
-      titulo,
-      descricao: taskDescInput.value.trim() || null,
-      data_limite: taskDataInput.value || null,
-      status: taskStatusInput.value,
+      titulo: tituloVal,
+      descricao: descricaoVal || null,
+      data_limite: dataLimiteVal,
+      status: statusVal,
       ambiente_id: Number(ambienteId),
-      responsavel_id: taskResponsavelSelect && taskResponsavelSelect.value ? Number(taskResponsavelSelect.value) : null,
-      indicado_id: taskIndicadoSelect && taskIndicadoSelect.value ? Number(taskIndicadoSelect.value) : null
+      responsavel_id: responsavelVal ? Number(responsavelVal) : null,
+      indicado_id: indicadoVal ? Number(indicadoVal) : null
     };
 
     try {
@@ -785,13 +806,13 @@ document.addEventListener('DOMContentLoaded', () => {
         body: JSON.stringify(payload)
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
       if (!response.ok) {
         throw new Error(data.erro || 'Não foi possível criar a tarefa.');
       }
 
       const novaTarefa = data.tarefa || data;
-      const novaId = novaTarefa.id || data.tarefa_id || data.id;
+      const novaId = novaTarefa?.id || data?.tarefa_id || data?.id;
       if (novaId) {
         salvarCorTarefa(novaId, corSelecionada);
       }
@@ -800,14 +821,17 @@ document.addEventListener('DOMContentLoaded', () => {
       mostrarToast('Tarefa criada com sucesso!');
       await carregarAmbienteETarefas();
     } catch (error) {
-      createTaskAlert.textContent = error.message;
-      createTaskAlert.classList.add('show-error');
+      if (createTaskAlert) {
+        createTaskAlert.textContent = error.message || 'Erro ao criar tarefa.';
+        createTaskAlert.classList.add('show-error');
+      }
     } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Adicionar ao Quadro';
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Criar Tarefa';
+      }
     }
   });
-
   // 6.2 Atualizar Status (PUT /api/tarefas/<tarefa_id>/status)
   async function atualizarStatusTarefa(tarefaId, novoStatus) {
     try {

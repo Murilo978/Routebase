@@ -1120,6 +1120,7 @@ body {
   opacity: 0;
   visibility: hidden;
   transition: var(--transition);
+  overflow-y: auto;
 }
 
 .modal-overlay.open {
@@ -1127,17 +1128,21 @@ body {
   visibility: visible;
 }
 
-.modal-card {
+.modal-card,
+.modal-content {
   position: relative;
-  width: 100%;
-  max-width: 470px;
+  width: 90%;
+  max-width: 500px;
+  box-sizing: border-box;
   background-color: var(--bg-surface);
   border: 1px solid var(--border-subtle);
   border-radius: 22px;
-  padding: 30px 28px;
+  padding: 28px 26px;
   box-shadow: var(--shadow-lg);
-  max-height: 92vh;
+  max-height: 90vh;
   overflow-y: auto;
+  overflow-x: hidden;
+  margin: auto;
 }
 
 .modal-card.modal-sm {
@@ -1151,13 +1156,15 @@ body {
   background: none;
   border: none;
   font-size: 1.65rem;
+  line-height: 1;
   color: var(--text-secondary);
   cursor: pointer;
 }
 
 .modal-header {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
+  padding-right: 14px;
 }
 
 .modal-tag {
@@ -1179,57 +1186,70 @@ body {
 
 .modal-header h3 {
   font-family: var(--font-heading);
-  font-size: 1.38rem;
+  font-size: 1.35rem;
   font-weight: 800;
   margin-bottom: 4px;
 }
 
 .modal-header p {
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   color: var(--text-secondary);
 }
 
 .modal-form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 13px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form-row-2 {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
+  width: 100%;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 5px;
+  width: 100%;
+  min-width: 0;
 }
 
 .form-group label {
   font-family: var(--font-heading);
-  font-size: 0.84rem;
+  font-size: 0.83rem;
   font-weight: 700;
+  color: var(--text-main);
 }
 
 .label-opt {
   font-weight: 400;
   color: var(--text-secondary);
-  font-size: 0.78rem;
+  font-size: 0.76rem;
 }
 
 .form-group input,
 .form-group textarea,
 .form-group select {
   width: 100%;
-  padding: 11px 13px;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  padding: 10px 12px;
   font-family: var(--font-body);
-  font-size: 0.92rem;
+  font-size: 0.9rem;
   color: var(--text-main);
   background-color: var(--bg-subtle);
   border: 1.5px solid var(--border-subtle);
   border-radius: 11px;
+}
+
+.form-group textarea {
+  resize: vertical;
 }
 
 .form-group input:focus,
@@ -1240,17 +1260,20 @@ body {
   border-color: var(--accent-green);
 }
 
-/* Swatches de Cor */
+/* Swatches de Cor contidos dentro da largura do modal */
 .color-swatches-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
-  padding: 4px 0;
+  padding: 4px 2px;
+  width: 100%;
 }
 
 .swatch-btn {
   width: 28px;
   height: 28px;
+  flex-shrink: 0;
   border-radius: 50%;
   border: 2px solid transparent;
   cursor: pointer;
@@ -1259,22 +1282,25 @@ body {
 
 .swatch-btn.selected {
   border-color: var(--text-main);
-  transform: scale(1.16);
+  transform: scale(1.14);
   box-shadow: 0 0 0 2px #FFFFFF inset;
 }
 
 .field-error {
-  font-size: 0.78rem;
+  font-size: 0.77rem;
   color: var(--danger-text);
-  min-height: 12px;
+  min-height: 14px;
 }
 
 .alert-box {
   display: none;
+  width: 100%;
+  box-sizing: border-box;
   padding: 10px 13px;
   border-radius: 10px;
   font-size: 0.84rem;
   font-weight: 500;
+  word-break: break-word;
 }
 
 .alert-box.show-error {
@@ -1292,40 +1318,18 @@ body {
 .btn-primary-pill,
 .btn-terracotta-pill,
 .btn-outline-pill {
+  display: block;
   width: 100%;
-  padding: 13px 20px;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 12px 20px;
+  margin-top: 4px;
   font-family: var(--font-heading);
   font-size: 0.94rem;
   font-weight: 700;
   border-radius: 999px;
   cursor: pointer;
   transition: var(--transition);
-}
-
-.btn-primary-pill {
-  background-color: var(--primary-dark);
-  color: #FFFFFF;
-  border: none;
-}
-
-.btn-primary-pill:hover {
-  background-color: var(--primary-dark-hover);
-}
-
-.btn-terracotta-pill {
-  background-color: var(--terracotta);
-  color: #FFFFFF;
-  border: none;
-}
-
-.btn-terracotta-pill:hover {
-  background-color: var(--terracotta-hover);
-}
-
-.btn-outline-pill {
-  background-color: var(--bg-surface);
-  color: var(--text-main);
-  border: 1.5px solid var(--border-subtle);
 }
 
 /* Modal Código de Convite */
