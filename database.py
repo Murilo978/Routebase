@@ -1,7 +1,10 @@
 import sqlite3
 import os
 
-DB_PATH = "database.db"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "database.db")
+SCHEMA_PATH = os.path.join(BASE_DIR, "schema.sql")
+
 
 def obter_conexao():
     """Retorna uma conexão com o banco de dados configurada com Row Factory."""
@@ -10,63 +13,22 @@ def obter_conexao():
     conn.execute("PRAGMA foreign_keys = ON;")
     return conn
 
+
 def inicializar_banco():
-    """Cria todas as tabelas do sistema se elas ainda não existirem."""
+    """Lê o arquivo schema.sql e cria todas as tabelas no database.db."""
+    if not os.path.exists(SCHEMA_PATH):
+        raise FileNotFoundError(f"Arquivo schema.sql não encontrado em: {SCHEMA_PATH}")
+
+    with open(SCHEMA_PATH, "r", encoding="utf-8") as arquivo_sql:
+        script_sql = arquivo_sql.read()
+
     conn = obter_conexao()
     cursor = conn.cursor()
-
-    script_sql = """
-    CREATE TABLE IF NOT EXISTS Usuario (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nome TEXT NOT NULL,
-        email TEXT NOT NULL UNIQUE,
-        foto_perfil TEXT DEFAULT 'default.png'
-    );
-
-    CREATE TABLE IF NOT EXISTS AmbienteTrabalho (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nome TEXT NOT NULL,
-        descricao TEXT,
-        data_entrega DATE NOT NULL,
-        codigo_convite TEXT NOT NULL UNIQUE
-    );
-
-    CREATE TABLE IF NOT EXISTS Participacao (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        papel TEXT NOT NULL,
-        usuario_id INTEGER NOT NULL,
-        ambiente_id INTEGER NOT NULL,
-        FOREIGN KEY (usuario_id) REFERENCES Usuario(id) ON DELETE CASCADE,
-        FOREIGN KEY (ambiente_id) REFERENCES AmbienteTrabalho(id) ON DELETE CASCADE
-    );
-
-    CREATE TABLE IF NOT EXISTS Tarefa (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        titulo TEXT NOT NULL,
-        descricao TEXT,
-        data_limite DATE NOT NULL,
-        status TEXT NOT NULL DEFAULT 'A_FAZER',
-        ambiente_id INTEGER NOT NULL,
-        responsavel_id INTEGER,
-        indicado_id INTEGER,
-        FOREIGN KEY (ambiente_id) REFERENCES AmbienteTrabalho(id) ON DELETE CASCADE,
-        FOREIGN KEY (responsavel_id) REFERENCES Usuario(id) ON DELETE SET NULL,
-        FOREIGN KEY (indicado_id) REFERENCES Usuario(id) ON DELETE SET NULL
-    );
-
-    CREATE TABLE IF NOT EXISTS LinkTarefa (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        titulo TEXT NOT NULL,
-        url TEXT NOT NULL,
-        tarefa_id INTEGER NOT NULL,
-        FOREIGN KEY (tarefa_id) REFERENCES Tarefa(id) ON DELETE CASCADE
-    );
-    """
-
     cursor.executescript(script_sql)
     conn.commit()
     conn.close()
-    print("Banco de dados inicializado com sucesso!")
+    print("Banco de dados inicializado com sucesso a partir de schema.sql!")
+
 
 if __name__ == "__main__":
     inicializar_banco()

@@ -3,6 +3,7 @@ import random
 import string
 from flask import Flask, request, jsonify, render_template
 
+from models.usuario import Usuario
 from models.ambiente import AmbienteTrabalho
 from models.participacao import Participacao
 from models.tarefa import Tarefa
@@ -13,14 +14,12 @@ from daos.ambiente_dao import AmbienteDAO
 from daos.participacao_dao import ParticipacaoDAO
 from daos.tarefa_dao import TarefaDAO
 from daos.link_tarefa_dao import LinkTarefaDAO
-from database import obter_conexao, inicializar_banco
+from database import inicializar_banco
 
 app = Flask(__name__, template_folder='.', static_folder='.', static_url_path='')
 
 # Cria todas as tabelas automaticamente se ainda não existirem
 inicializar_banco()
-
-
 
 usuario_dao = UsuarioDAO()
 ambiente_dao = AmbienteDAO()
@@ -28,17 +27,10 @@ participacao_dao = ParticipacaoDAO()
 tarefa_dao = TarefaDAO()
 link_tarefa_dao = LinkTarefaDAO()
 
+
 def gerar_codigo_convite(tamanho=6):
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=tamanho))
 
-def executar_query(sql, parametros=(), fetch=None):
-    conn = obter_conexao()
-    cursor = conn.cursor()
-    cursor.execute(sql, parametros)
-    res = cursor.fetchall() if fetch == 'all' else cursor.fetchone() if fetch == 'one' else None
-    conn.commit()
-    conn.close()
-    return res
 
 # ==========================================
 # 1. ROTAS DE AMBIENTES DE TRABALHO
@@ -52,9 +44,9 @@ def criar_ambiente():
 
     codigo = gerar_codigo_convite()
     ambiente = AmbienteTrabalho(
-        nome=dados.get('nome'), 
-        descricao=dados.get('descricao'), 
-        data_entrega=dados.get('data_entrega'), 
+        nome=dados.get('nome'),
+        descricao=dados.get('descricao'),
+        data_entrega=dados.get('data_entrega'),
         codigo_convite=codigo
     )
     a_id = ambiente_dao.inserir(ambiente)
@@ -67,7 +59,7 @@ def criar_ambiente():
 def entrar_ambiente():
     dados = request.get_json() or {}
     usuario_id, codigo = dados.get('usuario_id'), dados.get('codigo_convite')
-    
+
     if not usuario_id or not codigo:
         return jsonify({"erro": "usuario_id e codigo_convite são obrigatórios"}), 400
 
@@ -84,96 +76,53 @@ def entrar_ambiente():
 
 @app.route('/api/ambientes/usuario/<int:usuario_id>', methods=['GET'])
 def listar_ambientes_usuario(usuario_id):
-    rows = executar_query("""
-        SELECT a.* FROM AmbienteTrabalho a
-        JOIN Participacao p ON a.id = p.ambiente_id
-        WHERE p.usuario_id = ?
-    """, (usuario_id,), fetch='all')
-
-    ambientes = [
-        AmbienteTrabalho(
-            id=r['id'], nome=r['nome'], descricao=r['descricao'], 
-            data_entrega=r['data_entrega'], codigo_convite=r['codigo_convite']
-        ).to_dict() for r in rows
-    ]
-    return jsonify(ambientes), 200
+    ambientes = ambiente_dao.listar_por_usuario(usuario_id)
+    return jsonify([a.to_dict() if hasattr(a, 'to_dict') else a for a in ambientes]), 200
 
 
 @app.route('/api/ambientes/<int:ambiente_id>', methods=['DELETE'])
 def excluir_ambiente(ambiente_id):
     usuario_id = request.args.get('usuario_id', type=int)
     participacao = participacao_dao.buscar_por_usuario_e_ambiente(usuario_id, ambiente_id)
-    
+
     if not participacao or participacao.papel != 'criador':
         return jsonify({"erro": "Apenas o criador pode excluir o ambiente"}), 403
 
-    executar_query("DELETE FROM AmbienteTrabalho WHERE id = ?", (ambiente_id,))
+    ambiente_dao.excluir(ambiente_id)
     return jsonify({"mensagem": "Ambiente excluído"}), 200
+
 
 @app.route('/api/ambientes/<int:ambiente_id>', methods=['GET'])
 def obter_ambiente(ambiente_id):
-    row = executar_query("SELECT * FROM AmbienteTrabalho WHERE id = ?", (ambiente_id,), fetch='one')
-    if not row:
+    ambiente = ambiente_dao.buscar_por_id(ambiente_id)
+    if not ambiente:
         return jsonify({"erro": "Ambiente não encontrado"}), 404
 
-    ambiente = AmbienteTrabalho(
-        id=row['id'],
-        nome=row['nome'],
-        descricao=row['descricao'],
-        data_entrega=row['data_entrega'],
-        codigo_convite=row['codigo_convite']
-    )
     return jsonify(ambiente.to_dict()), 200
-
-
-@app.route('/api/tarefas/ambiente/<int:ambiente_id>', methods=['GET'])
-def listar_tarefas_ambiente(ambiente_id):
-    rows = executar_query("SELECT * FROM Tarefa WHERE ambiente_id = ?", (ambiente_id,), fetch='all')
-    tarefas = [
-        Tarefa(
-            id=r['id'],
-            titulo=r['titulo'],
-            descricao=r['descricao'],
-            data_limite=r['data_limite'],
-            status=r['status'],
-            ambiente_id=r['ambiente_id'],
-            responsavel_id=r['responsavel_id'],
-            indicado_id=r['indicado_id']
-        ).to_dict() for r in rows
-    ]
-    return jsonify(tarefas), 200
-
 
 
 @app.route('/api/ambientes/<int:ambiente_id>/gerar-codigo', methods=['POST'])
 def regenerar_codigo_convite(ambiente_id):
     novo_codigo = gerar_codigo_convite()
-    executar_query("UPDATE AmbienteTrabalho SET codigo_convite = ? WHERE id = ?", (novo_codigo, ambiente_id))
+    ambiente_dao.atualizar_codigo_convite(ambiente_id, novo_codigo)
     return jsonify({"mensagem": "Código atualizado", "novo_codigo": novo_codigo}), 200
+
 
 @app.route('/api/ambientes/<int:ambiente_id>/membros', methods=['GET'])
 def listar_membros_ambiente(ambiente_id):
-    rows = executar_query("""
-        SELECT u.id, u.nome, u.email, u.foto_perfil, p.papel
-        FROM Usuario u
-        JOIN Participacao p ON u.id = p.usuario_id
-        WHERE p.ambiente_id = ?
-    """, (ambiente_id,), fetch='all')
-
-    membros = [
-        {
-            "id": r['id'],
-            "nome": r['nome'],
-            "email": r['email'],
-            "foto_perfil": r['foto_perfil'],
-            "papel": r['papel']
-        } for r in rows
-    ]
+    membros = ambiente_dao.listar_membros(ambiente_id)
     return jsonify(membros), 200
+
 
 # ==========================================
 # 2. ROTAS DE TAREFAS
 # ==========================================
+
+@app.route('/api/tarefas/ambiente/<int:ambiente_id>', methods=['GET'])
+def listar_tarefas_ambiente(ambiente_id):
+    tarefas = tarefa_dao.listar_por_ambiente(ambiente_id)
+    return jsonify([t.to_dict() if hasattr(t, 'to_dict') else t for t in tarefas]), 200
+
 
 @app.route('/api/tarefas', methods=['POST'])
 def criar_tarefa():
@@ -185,6 +134,7 @@ def criar_tarefa():
         titulo=dados.get('titulo'),
         descricao=dados.get('descricao'),
         data_limite=dados.get('data_limite'),
+        status=dados.get('status', 'A_FAZER'),
         ambiente_id=dados.get('ambiente_id'),
         responsavel_id=dados.get('responsavel_id'),
         indicado_id=dados.get('indicado_id')
@@ -195,28 +145,28 @@ def criar_tarefa():
 @app.route('/api/tarefas/<int:tarefa_id>/assumir', methods=['POST'])
 def assumir_tarefa(tarefa_id):
     usuario_id = (request.get_json() or {}).get('usuario_id')
-    executar_query("UPDATE Tarefa SET responsavel_id = ?, status = 'EM_ANDAMENTO' WHERE id = ?", (usuario_id, tarefa_id))
+    tarefa_dao.assumir(tarefa_id, usuario_id)
     return jsonify({"mensagem": "Tarefa assumida"}), 200
 
 
 @app.route('/api/tarefas/<int:tarefa_id>/indicar', methods=['POST'])
 def indicar_colega(tarefa_id):
     indicado_id = (request.get_json() or {}).get('indicado_id')
-    executar_query("UPDATE Tarefa SET indicado_id = ? WHERE id = ?", (indicado_id, tarefa_id))
+    tarefa_dao.indicar(tarefa_id, indicado_id)
     return jsonify({"mensagem": "Indicação realizada"}), 200
 
 
 @app.route('/api/tarefas/<int:tarefa_id>/aceitar', methods=['POST'])
 def aceitar_indicacao(tarefa_id):
     usuario_id = (request.get_json() or {}).get('usuario_id')
-    executar_query("UPDATE Tarefa SET responsavel_id = ?, indicado_id = NULL, status = 'EM_ANDAMENTO' WHERE id = ? AND indicado_id = ?", (usuario_id, tarefa_id, usuario_id))
+    tarefa_dao.aceitar_indicacao(tarefa_id, usuario_id)
     return jsonify({"mensagem": "Indicação aceita"}), 200
 
 
 @app.route('/api/tarefas/<int:tarefa_id>/recusar', methods=['POST'])
 def recusar_indicacao(tarefa_id):
     usuario_id = (request.get_json() or {}).get('usuario_id')
-    executar_query("UPDATE Tarefa SET indicado_id = NULL WHERE id = ? AND indicado_id = ?", (tarefa_id, usuario_id))
+    tarefa_dao.recusar_indicacao(tarefa_id, usuario_id)
     return jsonify({"mensagem": "Indicação recusada"}), 200
 
 
@@ -226,13 +176,14 @@ def atualizar_status_tarefa(tarefa_id):
     if status not in ['A_FAZER', 'EM_ANDAMENTO', 'CONCLUIDA']:
         return jsonify({"erro": "Status inválido"}), 400
 
-    executar_query("UPDATE Tarefa SET status = ? WHERE id = ?", (status, tarefa_id))
+    tarefa_dao.atualizar_status(tarefa_id, status)
     return jsonify({"mensagem": "Status atualizado"}), 200
+
 
 @app.route('/api/tarefas/<int:tarefa_id>', methods=['DELETE'])
 def excluir_tarefa(tarefa_id):
-    executar_query("DELETE FROM LinkTarefa WHERE tarefa_id = ?", (tarefa_id,))
-    executar_query("DELETE FROM Tarefa WHERE id = ?", (tarefa_id,))
+    link_tarefa_dao.remover_por_tarefa(tarefa_id)
+    tarefa_dao.excluir(tarefa_id)
     return jsonify({"mensagem": "Tarefa excluída com sucesso"}), 200
 
 
@@ -244,24 +195,26 @@ def excluir_tarefa(tarefa_id):
 def obter_meus_avisos(usuario_id):
     hoje = datetime.date.today().isoformat()
 
-    def serializar(query, params):
-        rows = executar_query(query, params, fetch='all')
-        return [Tarefa(
-            id=r['id'], titulo=r['titulo'], descricao=r['descricao'], 
-            data_limite=r['data_limite'], status=r['status'], 
-            ambiente_id=r['ambiente_id'], responsavel_id=r['responsavel_id'], 
-            indicado_id=r['indicado_id']
-        ).to_dict() for r in rows]
+    indicacoes = tarefa_dao.listar_indicacoes_pendentes(usuario_id)
+    a_vencer = tarefa_dao.listar_a_vencer(usuario_id, hoje)
+    atrasadas = tarefa_dao.listar_atrasadas(usuario_id, hoje)
 
     return jsonify({
-        "indicacoes_pendentes": serializar("SELECT * FROM Tarefa WHERE indicado_id = ?", (usuario_id,)),
-        "tarefas_a_vencer": serializar("SELECT * FROM Tarefa WHERE responsavel_id = ? AND data_limite = ? AND status != 'CONCLUIDA'", (usuario_id, hoje)),
-        "tarefas_atrasadas": serializar("SELECT * FROM Tarefa WHERE responsavel_id = ? AND data_limite < ? AND status != 'CONCLUIDA'", (usuario_id, hoje))
+        "indicacoes_pendentes": [t.to_dict() if hasattr(t, 'to_dict') else t for t in indicacoes],
+        "tarefas_a_vencer": [t.to_dict() if hasattr(t, 'to_dict') else t for t in a_vencer],
+        "tarefas_atrasadas": [t.to_dict() if hasattr(t, 'to_dict') else t for t in atrasadas]
     }), 200
+
 
 # ==========================================
 # 4. ROTAS DE LINKS E PARTICIPANTES
 # ==========================================
+
+@app.route('/api/tarefas/<int:tarefa_id>/links', methods=['GET'])
+def listar_links_tarefa(tarefa_id):
+    links = link_tarefa_dao.listar_por_tarefa(tarefa_id)
+    return jsonify([l.to_dict() if hasattr(l, 'to_dict') else l for l in links]), 200
+
 
 @app.route('/api/tarefas/<int:tarefa_id>/links', methods=['POST'])
 def adicionar_link(tarefa_id):
@@ -275,35 +228,29 @@ def adicionar_link(tarefa_id):
 
 @app.route('/api/tarefas/links/<int:link_id>', methods=['DELETE'])
 def remover_link(link_id):
-    executar_query("DELETE FROM LinkTarefa WHERE id = ?", (link_id,))
+    link_tarefa_dao.remover(link_id)
     return jsonify({"mensagem": "Link removido"}), 200
 
 
 @app.route('/api/ambientes/<int:ambiente_id>/participantes/<int:usuario_id>', methods=['DELETE'])
 def remover_participante(ambiente_id, usuario_id):
-    executar_query("DELETE FROM Participacao WHERE ambiente_id = ? AND usuario_id = ?", (ambiente_id, usuario_id))
+    participacao_dao.remover(ambiente_id, usuario_id)
     return jsonify({"mensagem": "Participante removido"}), 200
+
 
 @app.route('/')
 def home():
     return render_template('index.html')
 
+
 # ==========================================
-# 4. ROTAS DE USUÁRIOS (CADASTRO E LOGIN)
+# 5. ROTAS DE USUÁRIOS (CADASTRO E LOGIN)
 # ==========================================
 
 @app.route('/api/usuarios', methods=['GET'])
 def listar_usuarios():
-    rows = executar_query("SELECT id, nome, email, foto_perfil FROM Usuario", fetch='all')
-    usuarios = [
-        {
-            "id": r['id'],
-            "nome": r['nome'],
-            "email": r['email'],
-            "foto_perfil": r['foto_perfil']
-        } for r in rows
-    ]
-    return jsonify(usuarios), 200
+    usuarios = usuario_dao.listar_todos()
+    return jsonify([u.to_dict() if hasattr(u, 'to_dict') else u for u in usuarios]), 200
 
 
 @app.route('/api/usuarios', methods=['POST'])
@@ -316,45 +263,27 @@ def cadastrar_usuario():
     if not nome or not email:
         return jsonify({"erro": "Nome e e-mail são obrigatórios"}), 400
 
-    # Verifica se o e-mail já está no banco
-    existente = executar_query(
-        "SELECT id, nome, email, foto_perfil FROM Usuario WHERE email = ?", 
-        (email,), 
-        fetch='one'
-    )
+    existente = usuario_dao.buscar_por_email(email)
     if existente:
         return jsonify({
             "mensagem": "Usuário já cadastrado",
-            "usuario": {
-                "id": existente['id'],
-                "nome": existente['nome'],
-                "email": existente['email'],
-                "foto_perfil": existente['foto_perfil']
-            }
+            "usuario": existente.to_dict() if hasattr(existente, 'to_dict') else existente
         }), 200
 
-    # Insere o novo usuário no banco
-    executar_query(
-        "INSERT INTO Usuario (nome, email, foto_perfil) VALUES (?, ?, ?)",
-        (nome, email, foto_perfil)
-    )
-
-    # Busca o usuário recém-criado para retornar com o ID
-    novo = executar_query(
-        "SELECT id, nome, email, foto_perfil FROM Usuario WHERE email = ?", 
-        (email,), 
-        fetch='one'
-    )
+    novo_usuario = Usuario(nome=nome, email=email, foto_perfil=foto_perfil)
+    novo_id = usuario_dao.inserir(novo_usuario)
+    novo_usuario.id = novo_id
 
     return jsonify({
         "mensagem": "Usuário criado com sucesso",
-        "usuario": {
-            "id": novo['id'],
-            "nome": novo['nome'],
-            "email": novo['email'],
-            "foto_perfil": novo['foto_perfil']
+        "usuario": novo_usuario.to_dict() if hasattr(novo_usuario, 'to_dict') else {
+            "id": novo_id,
+            "nome": nome,
+            "email": email,
+            "foto_perfil": foto_perfil
         }
     }), 201
+
 
 @app.route('/api/usuarios/<int:usuario_id>/foto', methods=['PUT'])
 def atualizar_foto_usuario(usuario_id):
@@ -363,7 +292,7 @@ def atualizar_foto_usuario(usuario_id):
     if not foto:
         return jsonify({"erro": "Imagem inválida"}), 400
 
-    executar_query("UPDATE Usuario SET foto_perfil = ? WHERE id = ?", (foto, usuario_id))
+    usuario_dao.atualizar_foto(usuario_id, foto)
     return jsonify({"mensagem": "Foto atualizada no banco"}), 200
 
 
